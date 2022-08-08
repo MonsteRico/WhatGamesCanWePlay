@@ -19,7 +19,7 @@ const Groups: NextPage = () => {
 	const games = trpc.useQuery(["library.getGames", { steamId }]);
 	// const game = trpc.useQuery(["library.getGame", { appId: "218620" }]);
 	// console.log(game.data);
-	console.log(games.data);
+	// console.log(games.data);
 	return (
 		<>
 			<Head>

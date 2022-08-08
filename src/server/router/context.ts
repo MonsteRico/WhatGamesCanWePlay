@@ -15,7 +15,7 @@ export const createContext = async (opts?: trpcNext.CreateNextContextOptions) =>
 	const steam = new SteamAPI({
 		apiKey: process.env.STEAM_API_KEY as string,
 		cache: {
-			enabled: true,
+			enabled: false,
 			expiresIn: 1000 * 60 * 5, // 5 min
 		},
 	});
