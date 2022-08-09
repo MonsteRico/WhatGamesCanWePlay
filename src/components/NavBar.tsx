@@ -30,12 +30,18 @@ export default function NavBar() {
 						<Link href="/documentation">
 							<a className="text-base font-medium text-gray-500 hover:text-gray-900">About</a>
 						</Link>
-						<Link href="/library">
-							<a className="text-base font-medium text-gray-500 hover:text-gray-900">My Library</a>
-						</Link>
-						<Link href="/groups">
-							<a className="text-base font-medium text-gray-500 hover:text-gray-900">Groups</a>
-						</Link>
+						{user ? (
+							<>
+								<Link href="/library">
+									<a className="text-base font-medium text-gray-500 hover:text-gray-900">
+										My Library
+									</a>
+								</Link>
+								<Link href="/groups">
+									<a className="text-base font-medium text-gray-500 hover:text-gray-900">Groups</a>
+								</Link>
+							</>
+						) : null}
 					</nav>
 					<div className="md:flex items-center justify-end md:flex-1 lg:w-0">
 						{user ? (
