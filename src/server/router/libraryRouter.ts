@@ -1,6 +1,5 @@
 import { createRouter } from "./context";
 import { z } from "zod";
-import SteamAPI, { AppDetails, OwnedGame, SteamCategory } from "type-steamapi";
 // https://www.npmjs.com/package/steam-api
 
 export const libraryRouter = createRouter()
