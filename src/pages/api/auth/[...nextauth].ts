@@ -32,9 +32,10 @@ export const authOptions: NextAuthOptions = {
 				console.log(user.id);
 				if (steamId) {
 					user.steamId = steamId;
-					await prisma.user.update({
+					await prisma.user.upsert({
 						where: { id: user.id },
-						data: { steamId },
+						update: { steamId },
+						create: { id: user.id },
 					});
 				}
 			}
