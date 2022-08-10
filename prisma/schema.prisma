@@ -46,14 +46,30 @@ model Session {
 }
 
 model User {
-  id            String     @id @default(cuid())
-  name          String?
-  email         String?    @unique
-  emailVerified DateTime?
-  image         String?
-  accounts      Account[]
-  sessions      Session[]
-  steamId String? @unique
+  id             String           @id @default(cuid())
+  name           String?
+  email          String?          @unique
+  emailVerified  DateTime?
+  image          String?
+  accounts       Account[]
+  sessions       Session[]
+  steamId        String?          @unique
+  UserInstalledGames UserInstalledGames[]
+  UserUninstalledGames UserUninstalledGames[]
+}
+
+model UserInstalledGames {
+  id     String @id @default(cuid())
+  userId String
+  appId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model UserUninstalledGames {
+  id     String @id @default(cuid())
+  userId String
+  appId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model VerificationToken {

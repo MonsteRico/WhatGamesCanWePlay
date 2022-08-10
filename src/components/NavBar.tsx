@@ -9,9 +9,9 @@ export default function NavBar() {
 	const user = session?.user;
 
 	return (
-		<div className="relative bg-white">
+		<div className="relative bg-slate-600 border-b-4 border-violet-500">
 			<div className="mx-auto px-4 sm:px-6">
-				<div className="flex justify-between items-center border-b-2 border-gray-100 py-6 md:justify-start md:space-x-10">
+				<div className="flex justify-between items-center py-3 md:justify-start md:space-x-10">
 					<div className="flex justify-start">
 						<Link href="/">
 							<Image
@@ -25,20 +25,18 @@ export default function NavBar() {
 					</div>
 					<nav className="md:flex space-x-10">
 						<Link href="/">
-							<a className="text-base font-medium text-gray-500 hover:text-gray-900">Home</a>
+							<a className="text-base font-medium hover:text-neutral-400">Home</a>
 						</Link>
 						<Link href="/documentation">
-							<a className="text-base font-medium text-gray-500 hover:text-gray-900">About</a>
+							<a className="text-base font-medium hover:text-neutral-400">About</a>
 						</Link>
 						{user ? (
 							<>
 								<Link href="/library">
-									<a className="text-base font-medium text-gray-500 hover:text-gray-900">
-										My Library
-									</a>
+									<a className="text-base font-medium hover:text-neutral-400">My Library</a>
 								</Link>
 								<Link href="/groups">
-									<a className="text-base font-medium text-gray-500 hover:text-gray-900">Groups</a>
+									<a className="text-base font-medium hover:text-neutral-400">Groups</a>
 								</Link>
 							</>
 						) : null}
@@ -46,16 +44,16 @@ export default function NavBar() {
 					<div className="md:flex items-center justify-end md:flex-1 lg:w-0">
 						{user ? (
 							<div className="flex items-center justify-between">
-								<p className="text-2xl mr-4 font-medium text-gray-900">{user.name}</p>
+								<p className="text-2xl mr-4 font-medium">{user.name}</p>
 								<button
-									className="p-3 bg-blue-400 text-white rounded"
+									className="p-3 bg-violet-500 rounded"
 									onClick={() => signOut({ callbackUrl: `${window.location.origin}` })}
 								>
 									Sign Out
 								</button>
 							</div>
 						) : (
-							<button className="p-3 bg-blue-400 text-white rounded" onClick={() => signIn("discord")}>
+							<button className="p-3 bg-violet-500 rounded" onClick={() => signIn("discord")}>
 								Sign in with Discord
 							</button>
 						)}

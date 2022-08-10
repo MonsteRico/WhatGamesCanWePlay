@@ -6,6 +6,11 @@ import NavBar from "../components/NavBar";
 import { OwnedGame } from "type-steamapi";
 import Image from "next/future/image";
 import GameCover from "../components/GameCover";
+import { UserInstalledGames } from "@prisma/client";
+import { Session } from "next-auth";
+import LibraryGame from "../components/LibraryGame";
+import { LEAGUE_OF_LEGENDS, OVERWATCH, VALORANT } from "../utils/gameConstants";
+
 const Groups: NextPage = () => {
 	const { data: session } = useSession();
 	let text: string = "Hello World";
@@ -14,12 +19,26 @@ const Groups: NextPage = () => {
 	if (session) {
 		text = session?.user?.name as string;
 		steamId = session?.steamId as string;
+		session.user?.id;
 	}
 
-	const games = trpc.useQuery(["library.getGames", { steamId }]);
+	const mutation = trpc.useMutation(["library.toggleGameInstalled"], {
+		onSuccess: () => {
+			utils.invalidateQueries("library.getUserInstalledGames");
+		},
+	});
+	const games = trpc.useQuery(["library.getSteamGames", { steamId }]);
+	const installedGames = trpc.useQuery(["library.getUserInstalledGames", { userId: session?.user?.id as string }]);
+	const utils = trpc.useContext();
+	// console.log(installedGames.data);
 	// const game = trpc.useQuery(["library.getGame", { appId: "218620" }]);
 	// console.log(game.data);
 	// console.log(games.data);
+
+	function toggleInstall(session: Session | null, game: OwnedGame, currentlyInstalled: boolean) {
+		mutation.mutate({ userId: session?.user?.id as string, appId: game.appId.toString(), currentlyInstalled });
+	}
+
 	return (
 		<>
 			<Head>
@@ -33,13 +52,37 @@ const Groups: NextPage = () => {
 				{steamId ? (
 					<>
 						<p className="pt-6 text-2xl text-blue-500 w-full">Your steamId {steamId}</p>
-						<div id="games" className="grid grid-cols-3 gap-10 w-full">
-							{games.data?.map((game: OwnedGame) => (
-								<div key={game.appId} className="text-xl content-center self-center text-center">
-									<GameCover appId={game.appId} alt={game.name} width={300} height={450}></GameCover>
-									<p>{game.name}</p>
-								</div>
-							))}
+						<div id="games" className="grid grid-cols-6 gap-10 w-full">
+							{games.data?.map((game: OwnedGame) => {
+								const gameInstalled = installedGames.data?.includes(game.appId.toString()) as boolean;
+								return (
+									<LibraryGame
+										key={game.appId}
+										session={session}
+										gameInstalled={gameInstalled}
+										toggleInstall={toggleInstall}
+										game={game}
+									></LibraryGame>
+								);
+							})}
+							<LibraryGame
+								session={session}
+								gameInstalled={installedGames.data?.includes(OVERWATCH.appId) as boolean}
+								toggleInstall={toggleInstall}
+								game={OVERWATCH}
+							></LibraryGame>
+							<LibraryGame
+								session={session}
+								gameInstalled={installedGames.data?.includes(LEAGUE_OF_LEGENDS.appId) as boolean}
+								toggleInstall={toggleInstall}
+								game={LEAGUE_OF_LEGENDS}
+							></LibraryGame>
+							<LibraryGame
+								session={session}
+								gameInstalled={installedGames.data?.includes(VALORANT.appId) as boolean}
+								toggleInstall={toggleInstall}
+								game={VALORANT}
+							></LibraryGame>
 						</div>
 					</>
 				) : (

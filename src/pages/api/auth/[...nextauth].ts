@@ -6,7 +6,7 @@ import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { prisma } from "../../../server/db/client";
 import { env } from "../../../env/server.mjs";
 import { Connections } from "../../../types/types";
-
+import { steam } from "../../../utils/steam";
 export const authOptions: NextAuthOptions = {
 	// Include user.id on session
 	callbacks: {
@@ -36,6 +36,29 @@ export const authOptions: NextAuthOptions = {
 						where: { id: user.id },
 						update: { steamId },
 						create: { id: user.id },
+					});
+					const steamGames = await steam.getUserOwnedGames(steamId);
+					const games = steamGames?.forEach(async (game) => {
+						const installedGame = await prisma.userInstalledGames.findFirst({
+							where: {
+								userId: user.id,
+								appId: game.appId.toString(),
+							},
+						});
+						const uninstalledGame = await prisma.userUninstalledGames.findFirst({
+							where: {
+								userId: user.id,
+								appId: game.appId.toString(),
+							},
+						});
+						if (!installedGame && !uninstalledGame) {
+							await prisma.userInstalledGames.create({
+								data: {
+									userId: user.id,
+									appId: game.appId.toString(),
+								},
+							});
+						}
 					});
 				}
 			}
