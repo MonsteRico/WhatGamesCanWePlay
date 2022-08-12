@@ -10,10 +10,17 @@ import { steam } from "../../../utils/steam";
 export const authOptions: NextAuthOptions = {
 	// Include user.id on session
 	callbacks: {
-		session({ session, user }) {
+		async session({ session, user }) {
 			if (session.user) {
 				session.user.id = user.id;
-				session.steamId = user.steamId;
+				session.user.steamId = user.steamId as string;
+				if (user.steamId) {
+					await prisma.user.upsert({
+						where: { id: user.id },
+						update: { steamId: session.user.steamId },
+						create: { id: user.id },
+					});
+				}
 			}
 			return session;
 		},
@@ -24,37 +31,30 @@ export const authOptions: NextAuthOptions = {
 				},
 			});
 			const json = (await connections.json()) as Connections[];
-			console.log(json);
 			const steamConnection = json.find((x) => x.type === "steam");
 			if (steamConnection) {
 				const steamId = steamConnection.id;
-				console.log(steamId);
-				console.log(user.id);
 				if (steamId) {
 					user.steamId = steamId;
-					await prisma.user.upsert({
-						where: { id: user.id },
-						update: { steamId },
-						create: { id: user.id },
-					});
 					const steamGames = await steam.getUserOwnedGames(steamId);
 					const games = steamGames?.forEach(async (game) => {
 						const installedGame = await prisma.userInstalledGames.findFirst({
 							where: {
-								userId: user.id,
+								steamId,
 								appId: game.appId.toString(),
 							},
 						});
 						const uninstalledGame = await prisma.userUninstalledGames.findFirst({
 							where: {
-								userId: user.id,
+								steamId,
 								appId: game.appId.toString(),
 							},
 						});
 						if (!installedGame && !uninstalledGame) {
+							console.log("Installing game");
 							await prisma.userInstalledGames.create({
 								data: {
-									userId: user.id,
+									steamId,
 									appId: game.appId.toString(),
 								},
 							});

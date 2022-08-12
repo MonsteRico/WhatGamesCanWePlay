@@ -20,13 +20,6 @@ export default function LibraryGame({ gameInstalled, game, toggleInstall, sessio
 				installed={gameInstalled}
 				appId={game.appId}
 				alt={game.name}
-				src={
-					game.appId == OVERWATCH_APPID ||
-					game.appId == LEAGUE_OF_LEGENDS_APPID ||
-					game.appId == VALORANT_APPID
-						? game.imgIconUrl
-						: undefined
-				}
 				width={300}
 				height={450}
 			></GameCover>

@@ -10,16 +10,16 @@ import { UserInstalledGames } from "@prisma/client";
 import { Session } from "next-auth";
 import LibraryGame from "../components/LibraryGame";
 import { LEAGUE_OF_LEGENDS, OVERWATCH, VALORANT } from "../utils/gameConstants";
+import { useEffect } from "react";
 
-const Groups: NextPage = () => {
+const Library: NextPage = () => {
 	const { data: session } = useSession();
 	let text: string = "Hello World";
 	let steamId: string = "";
 
 	if (session) {
 		text = session?.user?.name as string;
-		steamId = session?.steamId as string;
-		session.user?.id;
+		steamId = session?.user?.steamId as string;
 	}
 
 	const mutation = trpc.useMutation(["library.toggleGameInstalled"], {
@@ -27,16 +27,26 @@ const Groups: NextPage = () => {
 			utils.invalidateQueries("library.getUserInstalledGames");
 		},
 	});
-	const games = trpc.useQuery(["library.getSteamGames", { steamId }]);
-	const installedGames = trpc.useQuery(["library.getUserInstalledGames", { userId: session?.user?.id as string }]);
+	const gamesQuery = trpc.useQuery(["library.getSteamGames", { steamId }]);
+	const games = gamesQuery?.data?.map((game) => {
+		return game as OwnedGame;
+	});
+	games?.push(LEAGUE_OF_LEGENDS, OVERWATCH, VALORANT);
+	const installedGames = trpc.useQuery([
+		"library.getUserInstalledGames",
+		{ steamId: session?.user?.steamId as string },
+	]);
 	const utils = trpc.useContext();
-	// console.log(installedGames.data);
 	// const game = trpc.useQuery(["library.getGame", { appId: "218620" }]);
 	// console.log(game.data);
 	// console.log(games.data);
 
 	function toggleInstall(session: Session | null, game: OwnedGame, currentlyInstalled: boolean) {
-		mutation.mutate({ userId: session?.user?.id as string, appId: game.appId.toString(), currentlyInstalled });
+		mutation.mutate({
+			steamId: session?.user?.steamId as string,
+			appId: game.appId.toString(),
+			currentlyInstalled,
+		});
 	}
 
 	return (
@@ -51,39 +61,30 @@ const Groups: NextPage = () => {
 			<main className="container mx-auto flex flex-col justify-center items-center min-h-screen p-4">
 				{steamId ? (
 					<>
-						<p className="pt-6 text-2xl text-blue-500 w-full">Your steamId {steamId}</p>
-						<div id="games" className="grid grid-cols-6 gap-10 w-full">
-							{games.data?.map((game: OwnedGame) => {
-								const gameInstalled = installedGames.data?.includes(game.appId.toString()) as boolean;
-								return (
-									<LibraryGame
-										key={game.appId}
-										session={session}
-										gameInstalled={gameInstalled}
-										toggleInstall={toggleInstall}
-										game={game}
-									></LibraryGame>
-								);
-							})}
-							<LibraryGame
-								session={session}
-								gameInstalled={installedGames.data?.includes(OVERWATCH.appId) as boolean}
-								toggleInstall={toggleInstall}
-								game={OVERWATCH}
-							></LibraryGame>
-							<LibraryGame
-								session={session}
-								gameInstalled={installedGames.data?.includes(LEAGUE_OF_LEGENDS.appId) as boolean}
-								toggleInstall={toggleInstall}
-								game={LEAGUE_OF_LEGENDS}
-							></LibraryGame>
-							<LibraryGame
-								session={session}
-								gameInstalled={installedGames.data?.includes(VALORANT.appId) as boolean}
-								toggleInstall={toggleInstall}
-								game={VALORANT}
-							></LibraryGame>
-						</div>
+						{games ? (
+							<>
+								<p className="pt-6 text-2xl text-blue-500 w-full">Your steamId {steamId}</p>
+								<div id="games" className="grid grid-cols-6 gap-10 w-full">
+									{games.map((game: OwnedGame) => {
+										const gameInstalled = installedGames.data?.includes(
+											game.appId.toString()
+										) as boolean;
+										// console.log(game.name + " " + gameInstalled);
+										return (
+											<LibraryGame
+												key={game.appId}
+												session={session}
+												gameInstalled={gameInstalled}
+												toggleInstall={toggleInstall}
+												game={game}
+											></LibraryGame>
+										);
+									})}
+								</div>
+							</>
+						) : (
+							<div>Loading</div>
+						)}
 					</>
 				) : (
 					<div>
@@ -117,4 +118,4 @@ export async function getServerSideProps(context: any) {
 	};
 }
 
-export default Groups;
+export default Library;

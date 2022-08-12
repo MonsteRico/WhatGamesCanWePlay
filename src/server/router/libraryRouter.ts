@@ -1,8 +1,8 @@
-import { createRouter } from "./context";
+import { createProtectedRouter } from "./protected-router";
 import { z } from "zod";
 // https://www.npmjs.com/package/steam-api
 
-export const libraryRouter = createRouter()
+export const libraryRouter = createProtectedRouter()
 	.query("getSteamGames", {
 		input: z.object({
 			steamId: z.string(),
@@ -30,22 +30,22 @@ export const libraryRouter = createRouter()
 	.mutation("toggleGameInstalled", {
 		input: z.object({
 			appId: z.string(),
-			userId: z.string(),
+			steamId: z.string(),
 			currentlyInstalled: z.boolean(),
 		}),
 		async resolve({ input, ctx }) {
-			const { appId, userId, currentlyInstalled } = input;
+			const { appId, steamId, currentlyInstalled } = input;
 			const { prisma } = ctx;
 			let game = await prisma.userInstalledGames.findFirst({
 				where: {
-					userId,
+					steamId,
 					appId,
 				},
 			});
 			if (!game) {
 				game = await prisma.userUninstalledGames.findFirst({
 					where: {
-						userId,
+						steamId,
 						appId,
 					},
 				});
@@ -58,7 +58,7 @@ export const libraryRouter = createRouter()
 				});
 				await prisma.userUninstalledGames.create({
 					data: {
-						userId,
+						steamId,
 						appId,
 					},
 				});
@@ -70,14 +70,14 @@ export const libraryRouter = createRouter()
 				});
 				await prisma.userInstalledGames.create({
 					data: {
-						userId,
+						steamId,
 						appId,
 					},
 				});
 			} else {
 				await prisma.userInstalledGames.create({
 					data: {
-						userId,
+						steamId,
 						appId,
 					},
 				});
@@ -87,16 +87,16 @@ export const libraryRouter = createRouter()
 	})
 	.query("getUserInstalledGames", {
 		input: z.object({
-			userId: z.string(),
+			steamId: z.string(),
 		}),
 		async resolve({ input, ctx }) {
-			const { userId } = input;
+			const { steamId } = input;
 			const { prisma } = ctx;
 			const games = await prisma.userInstalledGames.findMany({
 				where: {
-					userId,
+					steamId,
 				},
 			});
-			return games.map(({ appId }) => appId);
+			return games.map((game) => game.appId);
 		},
 	});

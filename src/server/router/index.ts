@@ -2,15 +2,15 @@
 import { createRouter } from "./context";
 import superjson from "superjson";
 
-import { exampleRouter } from "./example";
-import { protectedExampleRouter } from "./protected-example-router";
+import { helloRouter } from "./example";
 import { libraryRouter } from "./libraryRouter";
+import { groupsRouter } from "./groupsRouter";
 
 export const appRouter = createRouter()
 	.transformer(superjson)
-	.merge("example.", exampleRouter)
+	.merge("hello.", helloRouter)
 	.merge("library.", libraryRouter)
-	.merge("question.", protectedExampleRouter);
+	.merge("groups.", groupsRouter);
 
 // export type definition of API
 export type AppRouter = typeof appRouter;

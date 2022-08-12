@@ -8,3 +8,11 @@ export interface Connections {
 	verified: boolean;
 	twoWayLink: boolean;
 }
+
+export interface Group {
+	id: string;
+	name: string;
+	joinCode: string;
+	ownerId: string;
+	memberIds: string[];
+}

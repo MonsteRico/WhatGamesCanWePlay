@@ -46,30 +46,52 @@ model Session {
 }
 
 model User {
-  id             String           @id @default(cuid())
-  name           String?
-  email          String?          @unique
-  emailVerified  DateTime?
-  image          String?
-  accounts       Account[]
-  sessions       Session[]
-  steamId        String?          @unique
-  UserInstalledGames UserInstalledGames[]
-  UserUninstalledGames UserUninstalledGames[]
+  id                   String                 @id @default(cuid())
+  name                 String?
+  email                String?                @unique
+  emailVerified        DateTime?
+  image                String?
+  accounts             Account[]
+  sessions             Session[]
+  steamId              String?                @unique
+  GroupMember          GroupMember[]
+  GroupOwner           GroupOwner[]
 }
 
 model UserInstalledGames {
   id     String @id @default(cuid())
-  userId String
-  appId String
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  steamId String
+  appId  String
 }
 
 model UserUninstalledGames {
   id     String @id @default(cuid())
-  userId String
-  appId String
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  steamId String
+  appId  String
+}
+
+model Group {
+  id          String        @id @default(cuid())
+  name        String
+  joinCode    String @unique
+  GroupMember GroupMember[]
+  GroupOwner  GroupOwner[]
+}
+
+model GroupOwner {
+  id      String @id @default(cuid())
+  groupId String @unique
+  userId  String
+  group   Group  @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  user    User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model GroupMember {
+  id      String @id @default(cuid())
+  groupId String
+  userId  String
+  group   Group  @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  user    User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model VerificationToken {
