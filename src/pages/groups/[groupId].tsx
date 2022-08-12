@@ -142,11 +142,10 @@ const GroupPage: NextPage = () => {
 
 export async function getServerSideProps(context: any) {
 	const session = await getSession(context);
-	const { groupId } = context.query;
 	// TODO potentially. if you are trying to view a group that you don't belong to, you should be redirected to the groups page.
 	// or if the group doesn't exist, you should be redirected to the groups page.
 	// not sure if it should notify before redirect or just redirect
-	const { data: group } = trpc.useQuery(["groups.getGroup", { groupId }]);
+	// also not sure how to do it
 	if (!session) {
 		return {
 			redirect: {

@@ -19,7 +19,7 @@ const Groups: NextPage = () => {
 	}
 	const createGroup = trpc.useMutation(["groups.createGroup"], {
 		onSuccess: (data) => {
-			router.push("/groups/[groupId]", `/groups/${data.id}`);
+			router.push(`/groups/${data.id}`);
 		},
 	});
 	const joinGroup = trpc.useMutation(["groups.joinGroup"], {
