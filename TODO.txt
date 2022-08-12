@@ -1,1 +1,0 @@
-TODO remove "prisma migrate reset" from vercel build once finished with all database changes
