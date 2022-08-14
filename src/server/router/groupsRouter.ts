@@ -260,7 +260,7 @@ export const groupsRouter = createProtectedRouter()
 			}
 		},
 	})
-	.query("getGroupMembers", {
+	.query("getMembers", {
 		input: z.object({
 			groupId: z.string(),
 		}),

@@ -4,6 +4,7 @@ import { trpc } from "../../utils/trpc";
 import { useSession, signIn, signOut, getSession } from "next-auth/react";
 import NavBar from "../../components/NavBar";
 import { useRouter } from "next/router";
+import { useState } from "react";
 const GroupPage: NextPage = () => {
 	const { data: session } = useSession();
 	let steamId: string = "";
@@ -18,7 +19,7 @@ const GroupPage: NextPage = () => {
 	const groupQuery = trpc.useQuery(["groups.getGroup", { groupId }]);
 	const hello = trpc.useQuery(["hello.world", { text: "Hello World" }]);
 	const group = groupQuery.data;
-	const groupMembersQuery = trpc.useQuery(["groups.getGroupMembers", { groupId }]);
+	const groupMembersQuery = trpc.useQuery(["groups.getMembers", { groupId }]);
 	const deleteGroup = trpc.useMutation(["groups.deleteGroup"]);
 	const leaveGroup = trpc.useMutation(["groups.leaveGroup"]);
 	const groupMembers = groupMembersQuery.data;
@@ -132,6 +133,13 @@ const GroupPage: NextPage = () => {
 							Leave Group
 						</button>
 					)}
+					<button
+						onClick={() => {
+							groupMembersQuery.refetch();
+						}}
+					>
+						Refetch members
+					</button>
 				</main>
 			</>
 		);
