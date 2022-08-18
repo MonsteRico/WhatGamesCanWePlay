@@ -1,5 +1,6 @@
 import { createProtectedRouter } from "./protected-router";
 import { z } from "zod";
+import { Prisma } from "@prisma/client";
 // https://www.npmjs.com/package/steam-api
 
 export const libraryRouter = createProtectedRouter()
@@ -98,5 +99,52 @@ export const libraryRouter = createProtectedRouter()
 				},
 			});
 			return games.map((game) => game.appId);
+		},
+	})
+	.query("getUsersInstalledGames", {
+		input: z.object({
+			steamIds: z.array(z.string()),
+		}),
+		async resolve({ input, ctx }): Promise<any> {
+			const { steamIds } = input;
+			const { prisma } = ctx;
+			// TODO REPLACE THIS WITH A SINGLE QUERY CALL TO THE DATABASE
+			// 			console.log(steamIds);
+			// 			const steamIdsString = steamIds.map((steamId) => `"${steamId}"`);
+			// 			const steamIdsStringJoined = "(" + steamIdsString.join(",") + ")";
+			// 			const games = await prisma.$queryRaw(Prisma.sql`
+			// 				SELECT id FROM (
+			//     (
+			//         SELECT UserInstalledGames.appId AS id, COUNT(UserInstalledGames.steamId) AS amt, items.total AS total
+			//         FROM (
+			//             UserInstalledGames
+			//             CROSS JOIN (
+			//                 SELECT COUNT(DISTINCT UserInstalledGames.steamId) AS total
+			//                     FROM UserInstalledGames WHERE UserInstalledGames.steamId IN ${steamIdsStringJoined}
+			//             ) AS items
+			//         )
+			//         WHERE UserInstalledGames.steamId IN ${steamIdsStringJoined}
+			//         GROUP BY UserInstalledGames.appId
+			//     ) AS table_name
+			// ) where (amt = total)
+			// 				`);
+
+			const games = await prisma.userInstalledGames.findMany({
+				where: {
+					steamId: {
+						in: steamIds,
+					},
+				},
+			});
+			let gameIds = games.map((game) => game.appId);
+			if (steamIds.length > 1) {
+				gameIds = gameIds.filter(
+					(
+						(s) => (v) =>
+							s.has(v) || !s.add(v)
+					)(new Set())
+				);
+			}
+			return gameIds;
 		},
 	});

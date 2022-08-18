@@ -5,6 +5,7 @@ import { useSession, signIn, signOut, getSession } from "next-auth/react";
 import NavBar from "../../components/NavBar";
 import { useRouter } from "next/router";
 import { useState } from "react";
+import GameCover from "../../components/GameCover";
 const GroupPage: NextPage = () => {
 	const { data: session } = useSession();
 	let steamId: string = "";
@@ -12,6 +13,7 @@ const GroupPage: NextPage = () => {
 		steamId = session?.steamId as string;
 	}
 	const router = useRouter();
+	const [enabledUsers, setEnabledUsers] = useState<string[]>([]);
 	const { groupId } = router.query;
 	if (!groupId || typeof groupId !== "string") {
 		return <div>Invalid Group Page</div>;
@@ -22,6 +24,7 @@ const GroupPage: NextPage = () => {
 	const groupMembersQuery = trpc.useQuery(["groups.getMembers", { groupId }]);
 	const deleteGroup = trpc.useMutation(["groups.deleteGroup"]);
 	const leaveGroup = trpc.useMutation(["groups.leaveGroup"]);
+	const usersInstalledGamesQuery = trpc.useQuery(["library.getUsersInstalledGames", { steamIds: enabledUsers }]);
 	const groupMembers = groupMembersQuery.data;
 	if (!groupQuery.data) {
 		// TODO add error page
@@ -64,6 +67,25 @@ const GroupPage: NextPage = () => {
 										className="border border-yellow-500 text-yellow-500 p-5 mt-4"
 										key={member.userId}
 									>
+										<div>
+											<input
+												checked={enabledUsers.includes(member.steamId as string) ? true : false}
+												type="checkbox"
+												name={"included" + member.steamId}
+												onChange={(e) => {
+													if (e.target.checked) {
+														setEnabledUsers([...enabledUsers, member.steamId as string]);
+														usersInstalledGamesQuery.refetch();
+													} else {
+														setEnabledUsers(
+															enabledUsers.filter((user) => user !== member.steamId)
+														);
+														usersInstalledGamesQuery.refetch();
+													}
+												}}
+											></input>
+											<label>{member.userName} Included?</label>
+										</div>
 										<p className="text-2xl">User Id: {member.userId}</p>
 										<p className="text-2xl">User Name: {member.userName}</p>
 										<p className="text-2xl">
@@ -74,6 +96,25 @@ const GroupPage: NextPage = () => {
 							} else if (member) {
 								return (
 									<div className="border p-5 mt-4" key={member.userId}>
+										<div>
+											<input
+												checked={enabledUsers.includes(member.steamId as string) ? true : false}
+												type="checkbox"
+												name={"included" + member.steamId}
+												onChange={(e) => {
+													if (e.target.checked) {
+														setEnabledUsers([...enabledUsers, member.steamId as string]);
+														usersInstalledGamesQuery.refetch();
+													} else {
+														setEnabledUsers(
+															enabledUsers.filter((user) => user !== member.steamId)
+														);
+														usersInstalledGamesQuery.refetch();
+													}
+												}}
+											></input>
+											<label>{member.userName} Included?</label>
+										</div>
 										<p className="text-2xl">User Id: {member.userId}</p>
 										<p className="text-2xl">User Name: {member.userName}</p>
 										<p className="text-2xl">
@@ -133,13 +174,18 @@ const GroupPage: NextPage = () => {
 							Leave Group
 						</button>
 					)}
-					<button
-						onClick={() => {
-							groupMembersQuery.refetch();
-						}}
-					>
-						Refetch members
-					</button>
+					{usersInstalledGamesQuery.data?.map((appId: string) => {
+						return (
+							<GameCover
+								appId={appId}
+								height={450}
+								width={300}
+								installed={true}
+								key={appId}
+								alt={appId + " Game Cover"}
+							></GameCover>
+						);
+					})}
 				</main>
 			</>
 		);

@@ -89,6 +89,7 @@ const Library: NextPage = () => {
 				) : (
 					<div>
 						<p>You do not have a linked Steam id.</p>
+						<p>please link it :)</p>
 						{
 							// TODO
 							// optionally have an option to link a steam account manually
