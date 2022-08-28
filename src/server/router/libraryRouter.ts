@@ -103,7 +103,7 @@ export const libraryRouter = createProtectedRouter()
 	})
 	.query("getUsersInstalledGames", {
 		input: z.object({
-			steamIds: z.array(z.string()),
+			steamIds: z.array(z.string().nullable()).nullable(),
 		}),
 		async resolve({ input, ctx }): Promise<any> {
 			const { steamIds } = input;
@@ -129,22 +129,30 @@ export const libraryRouter = createProtectedRouter()
 			// ) where (amt = total)
 			// 				`);
 
-			const games = await prisma.userInstalledGames.findMany({
-				where: {
-					steamId: {
-						in: steamIds,
+			// if any steamIds are null, remove them
+			if (steamIds) {
+				const filteredSteamIds = steamIds.filter((steamId) => steamId !== null) as string[];
+
+				if (filteredSteamIds.length !== steamIds.length) {
+					return [];
+				}
+				const games = await prisma.userInstalledGames.findMany({
+					where: {
+						steamId: {
+							in: filteredSteamIds,
+						},
 					},
-				},
-			});
-			let gameIds = games.map((game) => game.appId);
-			if (steamIds.length > 1) {
-				gameIds = gameIds.filter(
-					(
-						(s) => (v) =>
-							s.has(v) || !s.add(v)
-					)(new Set())
-				);
+				});
+				let gameIds = games.map((game) => game.appId);
+				if (steamIds.length > 1) {
+					gameIds = gameIds.filter(
+						(
+							(s) => (v) =>
+								s.has(v) || !s.add(v)
+						)(new Set())
+					);
+				}
+				return gameIds;
 			}
-			return gameIds;
 		},
 	});

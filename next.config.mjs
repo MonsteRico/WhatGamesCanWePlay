@@ -17,6 +17,6 @@ export default defineNextConfig({
 	swcMinify: true,
 	experimental: { images: { allowFutureImage: true } },
 	images: {
-		domains: ["localhost:3000", "steamcdn-a.akamaihd.net", "cdn.akamai.steamstatic.com"],
+		domains: ["localhost:3000", "steamcdn-a.akamaihd.net", "cdn.akamai.steamstatic.com", "cdn.discordapp.com"],
 	},
 });

@@ -20,8 +20,6 @@ export default function LibraryGame({ gameInstalled, game, toggleInstall, sessio
 				installed={gameInstalled}
 				appId={game.appId}
 				alt={game.name}
-				width={300}
-				height={450}
 			></GameCover>
 
 			<label htmlFor={"toggle" + game.appId} className="inline-flex relative items-center cursor-pointer">

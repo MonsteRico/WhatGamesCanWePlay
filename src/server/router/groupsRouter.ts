@@ -281,7 +281,7 @@ export const groupsRouter = createProtectedRouter()
 					},
 				});
 				if (user && groupMemberEntry.userId == user.id) {
-					return { userId: user.id, userName: user.name, steamId: user.steamId };
+					return { userId: user.id, userName: user.name, steamId: user.steamId, image: user.image };
 				}
 			});
 			return await Promise.all(groupMembers);

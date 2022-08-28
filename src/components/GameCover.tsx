@@ -7,16 +7,18 @@ import overwatchCover from "../../public/overwatchCover.jpg";
 import valorantCover from "../../public/valorantCover.png";
 interface GameCoverProps {
 	appId: string;
-	width: number;
-	height: number;
 	alt: string;
 	installed: boolean;
 	className?: string;
 }
 
-const GameCover = ({ appId, width, alt, height, installed, className, ...rest }: GameCoverProps) => {
+const GameCover = ({ appId, alt, installed, className, ...rest }: GameCoverProps) => {
 	const [imgSrc, setImgSrc] = useState(`https://steamcdn-a.akamaihd.net/steam/apps/${appId}/library_600x900.jpg`);
 	const fallbackSrc = `https://cdn.akamai.steamstatic.com/steam/apps/${appId}/header.jpg`;
+	// check if imgSrc is valid
+	const width = 300;
+	const height = imgSrc !== fallbackSrc ? 450 : 140;
+	console.log(height);
 	if (appId === LEAGUE_OF_LEGENDS_APPID) {
 		return (
 			<Image
@@ -28,8 +30,8 @@ const GameCover = ({ appId, width, alt, height, installed, className, ...rest }:
 					console.log("fallback", fallbackSrc);
 					setImgSrc(fallbackSrc);
 				}}
-				width={imgSrc !== fallbackSrc ? width : 300}
-				height={imgSrc !== fallbackSrc ? height : 140}
+				width={300}
+				height={height}
 			/>
 		);
 	} else if (appId === OVERWATCH_APPID) {
@@ -43,8 +45,8 @@ const GameCover = ({ appId, width, alt, height, installed, className, ...rest }:
 					console.log("fallback", fallbackSrc);
 					setImgSrc(fallbackSrc);
 				}}
-				width={imgSrc !== fallbackSrc ? width : 300}
-				height={imgSrc !== fallbackSrc ? height : 140}
+				width={300}
+				height={height}
 			/>
 		);
 	} else if (appId === VALORANT_APPID) {
@@ -58,8 +60,8 @@ const GameCover = ({ appId, width, alt, height, installed, className, ...rest }:
 					console.log("fallback", fallbackSrc);
 					setImgSrc(fallbackSrc);
 				}}
-				width={imgSrc !== fallbackSrc ? width : 300}
-				height={imgSrc !== fallbackSrc ? height : 140}
+				width={300}
+				height={height}
 			/>
 		);
 	}
@@ -73,8 +75,8 @@ const GameCover = ({ appId, width, alt, height, installed, className, ...rest }:
 				console.log("fallback", fallbackSrc);
 				setImgSrc(fallbackSrc);
 			}}
-			width={imgSrc !== fallbackSrc ? width : 300}
-			height={imgSrc !== fallbackSrc ? height : 140}
+			width={300}
+			height={height}
 		/>
 	);
 };

@@ -4,8 +4,12 @@ import { trpc } from "../../utils/trpc";
 import { useSession, signIn, signOut, getSession } from "next-auth/react";
 import NavBar from "../../components/NavBar";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import GameCover from "../../components/GameCover";
+import { UserSelect } from "../../components/UserSelect";
+import { DeleteButton } from "../../components/DeleteButton";
+import { LeaveButton } from "../../components/LeaveButton";
+
 const GroupPage: NextPage = () => {
 	const { data: session } = useSession();
 	let steamId: string = "";
@@ -14,18 +18,35 @@ const GroupPage: NextPage = () => {
 	}
 	const router = useRouter();
 	const [enabledUsers, setEnabledUsers] = useState<string[]>([]);
-	const { groupId } = router.query;
-	if (!groupId || typeof groupId !== "string") {
-		return <div>Invalid Group Page</div>;
-	}
+	const { groupId } = router.query as { groupId: string };
+
 	const groupQuery = trpc.useQuery(["groups.getGroup", { groupId }]);
-	const hello = trpc.useQuery(["hello.world", { text: "Hello World" }]);
 	const group = groupQuery.data;
 	const groupMembersQuery = trpc.useQuery(["groups.getMembers", { groupId }]);
 	const deleteGroup = trpc.useMutation(["groups.deleteGroup"]);
 	const leaveGroup = trpc.useMutation(["groups.leaveGroup"]);
 	const usersInstalledGamesQuery = trpc.useQuery(["library.getUsersInstalledGames", { steamIds: enabledUsers }]);
 	const groupMembers = groupMembersQuery.data;
+	const [disabledUsers, setDisabledUsers] = useState<string[]>([]);
+	const [copyText, setCopyText] = useState("Click to copy!");
+	// set disabledUsers to groupMembersSteamIds on first page load
+	useEffect(() => {
+		const groupMembersSteamIds: string[] = groupMembers?.map((member) => member?.steamId) as string[];
+
+		setDisabledUsers(groupMembersSteamIds);
+	}, [groupMembers]);
+
+	async function copyTextToClipboard(text: string) {
+		setCopyText("Copied!");
+		if ("clipboard" in navigator) {
+			return await navigator.clipboard.writeText(text);
+		} else {
+			return document.execCommand("copy", true, text);
+		}
+	}
+	if (!groupId || typeof groupId !== "string") {
+		return <div>Invalid Group Page</div>;
+	}
 	if (!groupQuery.data) {
 		// TODO add error page
 		return <div>Invalid Group Page</div>;
@@ -36,7 +57,7 @@ const GroupPage: NextPage = () => {
 		return <div>You are not a member of this group.</div>;
 	}
 
-	if (group) {
+	if (group && groupMembers && disabledUsers && enabledUsers) {
 		const { ownerId, name, joinCode, id: groupId } = group;
 
 		const isOwner = ownerId === session?.user?.id;
@@ -52,140 +73,98 @@ const GroupPage: NextPage = () => {
 				</Head>
 				<NavBar></NavBar>
 
-				<main className="container mx-auto flex flex-col items-center justify-center min-h-screen p-4">
-					<div className="pt-6 text-2xl text-blue-500 flex justify-center items-center w-full">
-						<p>Your steamId {steamId}</p>
+				<main className="container mx-auto flex flex-col items-center justify-center p-4">
+					<div className="grid grid-cols-3 gap-10 items-center w-full mb-10">
+						<div className="flex justify-start items-start">
+							<button
+								className="p-3 bg-violet-500 rounded"
+								onClick={() => {
+									// TODO write need help thing
+									alert("I'm working on writing this!");
+								}}
+							>
+								Need Help?
+							</button>
+						</div>
+						<div className="flex flex-col justify-start items-center">
+							<h1 className="text-7xl mb-5 px-5 pb-3 border-violet-500 border-b-4">{group.name}</h1>
+							<p
+								className="text-2xl cursor-pointer"
+								onClick={() => {
+									copyTextToClipboard(joinCode);
+								}}
+							>
+								Join Code: {group.joinCode}
+							</p>
+							<p
+								className="text-gray-500 cursor-pointer"
+								onClick={() => {
+									copyTextToClipboard(joinCode);
+								}}
+							>
+								{copyText}
+							</p>
+						</div>
+						<div className="flex justify-end items-end">
+							<button
+								className="p-3 bg-violet-500 rounded mr-5"
+								onClick={() => {
+									// TODO group settings
+									alert("Editing group settings will come soon!");
+								}}
+							>
+								Group Settings
+							</button>
+							{isOwner && groupMembers ? (
+								<DeleteButton
+									groupId={groupId}
+									session={session}
+									router={router}
+									deleteGroup={deleteGroup}
+									length={groupMembers.length}
+								></DeleteButton>
+							) : (
+								<LeaveButton
+									groupId={groupId}
+									session={session}
+									push={router.push}
+									ownerId={group.ownerId}
+									mutate={leaveGroup.mutate}
+								></LeaveButton>
+							)}
+						</div>
 					</div>
-					<p className="text-5xl">Group Name: {name}</p>
-					<p className="text-2xl">Group Id: {groupId}</p>
-					<p className="text-2xl">Join Code: {joinCode}</p>
-					{groupMembers &&
-						groupMembers.map((member) => {
-							if (member && member?.userId === ownerId) {
-								return (
-									<div
-										className="border border-yellow-500 text-yellow-500 p-5 mt-4"
-										key={member.userId}
-									>
-										<div>
-											<input
-												checked={enabledUsers.includes(member.steamId as string) ? true : false}
-												type="checkbox"
-												name={"included" + member.steamId}
-												onChange={(e) => {
-													if (e.target.checked) {
-														setEnabledUsers([...enabledUsers, member.steamId as string]);
-														usersInstalledGamesQuery.refetch();
-													} else {
-														setEnabledUsers(
-															enabledUsers.filter((user) => user !== member.steamId)
-														);
-														usersInstalledGamesQuery.refetch();
-													}
-												}}
-											></input>
-											<label>{member.userName} Included?</label>
-										</div>
-										<p className="text-2xl">User Id: {member.userId}</p>
-										<p className="text-2xl">User Name: {member.userName}</p>
-										<p className="text-2xl">
-											User Steam Id: {member.steamId ? member.steamId : "N/A"}
-										</p>
-									</div>
-								);
-							} else if (member) {
-								return (
-									<div className="border p-5 mt-4" key={member.userId}>
-										<div>
-											<input
-												checked={enabledUsers.includes(member.steamId as string) ? true : false}
-												type="checkbox"
-												name={"included" + member.steamId}
-												onChange={(e) => {
-													if (e.target.checked) {
-														setEnabledUsers([...enabledUsers, member.steamId as string]);
-														usersInstalledGamesQuery.refetch();
-													} else {
-														setEnabledUsers(
-															enabledUsers.filter((user) => user !== member.steamId)
-														);
-														usersInstalledGamesQuery.refetch();
-													}
-												}}
-											></input>
-											<label>{member.userName} Included?</label>
-										</div>
-										<p className="text-2xl">User Id: {member.userId}</p>
-										<p className="text-2xl">User Name: {member.userName}</p>
-										<p className="text-2xl">
-											User Steam Id: {member.steamId ? member.steamId : "N/A"}
-										</p>
-									</div>
-								);
-							} else {
-								return null;
-							}
-						})}
-					{isOwner && groupMembers ? (
-						<button
-							onClick={() => {
-								if (window.confirm("Are you sure you want to delete this group?")) {
-									if (groupMembers.length > 1) {
-										if (
-											window.confirm(
-												"This group has members other than you. Are you sure you want to delete this group?"
-											)
-										) {
-											deleteGroup.mutate({
-												groupId,
-												userId: session?.user?.id as string,
-											});
-											router.push("/groups");
-										}
-									} else {
-										deleteGroup.mutate({
-											groupId,
-											userId: session?.user?.id as string,
-										});
-										router.push("/groups");
-									}
-								}
-							}}
-						>
-							Delete Group
-						</button>
+
+					<UserSelect
+						enabledUsers={enabledUsers}
+						setEnabledUsers={setEnabledUsers}
+						usersInstalledGamesQuery={usersInstalledGamesQuery}
+						groupMembers={groupMembers}
+						disabledUsers={disabledUsers}
+						setDisabledUsers={setDisabledUsers}
+					></UserSelect>
+
+					<h1 className="text-5xl border-violet-500 border-b-4 pb-3 px-5 my-20">Games You Can Play</h1>
+					{usersInstalledGamesQuery.data?.length === 0 ? (
+						<div className="text-2xl">
+							{enabledUsers.length === 0
+								? "Click on the user icons above to mark users as online and check what games they can all play!"
+								: "Sorry, you guys don't have any games in common apparently!"}
+						</div>
 					) : (
-						<button
-							onClick={() => {
-								if (session?.user?.id !== group.ownerId) {
-									leaveGroup.mutate({
-										groupId,
-										userId: session?.user?.id as string,
-									});
-									window.alert("You have left the group.");
-									router.push("/groups");
-								} else {
-									window.alert(
-										"You can't leave the group you made. This shouldn't even be possible honestly."
-									);
-								}
-							}}
-						>
-							Leave Group
-						</button>
+						<div id="games" className="grid items-center grid-cols-5 gap-10 w-full">
+							{usersInstalledGamesQuery.data?.map((appId: string) => {
+								return (
+									<GameCover
+										appId={appId}
+										installed={true}
+										key={appId}
+										alt={appId + " Game Cover"}
+									></GameCover>
+								);
+							})}
+						</div>
 					)}
-					{usersInstalledGamesQuery.data?.map((appId: string) => {
-						return (
-							<GameCover
-								appId={appId}
-								height={450}
-								width={300}
-								installed={true}
-								key={appId}
-								alt={appId + " Game Cover"}
-							></GameCover>
-						);
-					})}
 				</main>
 			</>
 		);
