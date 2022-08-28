@@ -87,7 +87,9 @@ const GroupPage: NextPage = () => {
 							</button>
 						</div>
 						<div className="flex flex-col justify-start items-center">
-							<h1 className="text-7xl mb-5 px-5 pb-3 border-violet-500 border-b-4">{group.name}</h1>
+							<h1 className="text-center text-7xl mb-5 px-5 pb-5 font-bold border-violet-500 border-b-4">
+								{group.name}
+							</h1>
 							<p
 								className="text-2xl cursor-pointer"
 								onClick={() => {

@@ -18,7 +18,6 @@ const GameCover = ({ appId, alt, installed, className, ...rest }: GameCoverProps
 	// check if imgSrc is valid
 	const width = 300;
 	const height = imgSrc !== fallbackSrc ? 450 : 140;
-	console.log(height);
 	if (appId === LEAGUE_OF_LEGENDS_APPID) {
 		return (
 			<Image

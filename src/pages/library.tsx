@@ -58,12 +58,19 @@ const Library: NextPage = () => {
 			</Head>
 			<NavBar></NavBar>
 
-			<main className="container mx-auto flex flex-col justify-center items-center min-h-screen p-4">
+			<main className="container mx-auto flex flex-col justify-center items-center p-4">
+				<h1 className="text-center text-7xl mb-5 px-5 pb-5 font-bold border-violet-500 border-b-4">
+					My Library
+				</h1>
+				<p className="text-justify text-4xl w-3/4 mb-10">
+					View all your Steam games along with some other free games you may own. Don&apos;t have a game
+					installed? Hover over it and toggle it as uninstalled! Any new games you add to your Steam library
+					will be automatically added when you log in again.
+				</p>
 				{steamId ? (
 					<>
 						{games ? (
 							<>
-								<p className="pt-6 text-2xl text-blue-500 w-full">Your steamId {steamId}</p>
 								<div id="games" className="grid grid-cols-6 gap-10 w-full">
 									{games.map((game: OwnedGame) => {
 										const gameInstalled = installedGames.data?.includes(
