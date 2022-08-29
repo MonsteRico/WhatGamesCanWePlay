@@ -4,17 +4,24 @@ import { trpc } from "../utils/trpc";
 import { useSession, signIn, signOut, getSession } from "next-auth/react";
 import NavBar from "../components/NavBar";
 import { useRouter } from "next/router";
+import UserIcon from "../components/UserIcon";
+import CoolButton from "../components/CoolButton";
+import { useState } from "react";
+import Modal from "../components/Modal";
 const Groups: NextPage = () => {
 	const { data: session } = useSession();
 	let text: string = "Hello World";
 	let steamId: string = "";
+	const [joinGroupModalOpen, setJoinGroupModalOpen] = useState(false);
+	const [createGroupModalOpen, setCreateGroupModalOpen] = useState(false);
 	if (session) {
 		text = session?.user?.name as string;
 		steamId = session?.steamId as string;
 	}
 	const hello = trpc.useQuery(["hello.world", { text }]);
-	const groups = trpc.useQuery(["groups.getGroups"]);
-	if (groups.data) {
+	const groupsQuery = trpc.useQuery(["groups.getGroups"]);
+	const groups = groupsQuery.data;
+	if (groupsQuery.data) {
 		// console.log(groups.data);
 	}
 	const createGroup = trpc.useMutation(["groups.createGroup"], {
@@ -41,65 +48,91 @@ const Groups: NextPage = () => {
 			</Head>
 			<NavBar></NavBar>
 
-			<main className="container mx-auto flex flex-col items-center justify-center min-h-screen p-4">
-				<div className="pt-6 text-2xl text-blue-500 flex justify-center items-center w-full">
-					{hello.data ? <p>{hello.data.greeting}</p> : <p>Loading..</p>}
+			<main className="container mx-auto flex flex-col items-center justify-center p-4">
+				<h1 className="text-center text-7xl mb-5 px-5 pb-5 font-bold border-violet-500 border-b-4">Groups</h1>
+				<p className="text-center text-4xl w-3/4">Create, join, and view groups!</p>
+				<p className="text-center text-3xl w-3/4 mb-10">(This is where you&apos;ll need some friends 😄)</p>
+				<div className="pt-6 text-2xl flex justify-between items-center w-1/4">
+					<CoolButton
+						onClick={() => {
+							setJoinGroupModalOpen(true);
+						}}
+					>
+						Join Group
+					</CoolButton>
+					<CoolButton
+						onClick={() => {
+							setCreateGroupModalOpen(true);
+						}}
+					>
+						Create Group
+					</CoolButton>
 				</div>
-				<div className="pt-6 text-2xl text-blue-500 flex justify-center items-center w-full">
-					<div className="w-full rounded-xl bg-white p-4 shadow-2xl shadow-white/40">
-						<p className="mb-8 font-semibold">Created by Gezellligheid</p>
-						<div className="mb-4 grid grid-cols-2 gap-4">
-							<div className="flex flex-col">
-								<label htmlFor="text" className="mb-2 font-semibold">
-									Join Code
-								</label>
-								<input
-									type="text"
-									id="joinCode"
-									className="w-full max-w-lg rounded-lg border border-slate-200 px-2 py-1 hover:border-blue-500 focus:outline-none focus:ring focus:ring-blue-500/40 active:ring active:ring-blue-500/40"
-								/>
+				<h1 className="text-5xl border-violet-500 border-b-4 pb-3 px-5 my-20">My Groups</h1>
+				<div className="w-full grid grid-cols-2 gap-x-20">
+					{groups?.map((group) => (
+						<div
+							onClick={() => {
+								router.push("/groups/" + group.id);
+							}}
+							key={group.id}
+							className="cursor-pointer flex items-center justify-between flex-row rounded-x p-4"
+						>
+							<div className="flex flex-row items-center">
+								<p className="text-4xl">{group.ownerId === session?.user?.id ? "👑" : "🎮"}</p>
+								<p className="px-5 text-2xl">{group.name}</p>
 							</div>
-							<div className="flex flex-col">
-								<button
-									id="join"
-									className="w-full max-w-lg rounded-lg border border-slate-200 px-2 py-1 hover:border-blue-500 focus:outline-none focus:ring focus:ring-blue-500/40 active:ring active:ring-blue-500/40"
+							<div className="flex flex-row">
+								<CoolButton>View</CoolButton>
+							</div>
+						</div>
+					))}
+				</div>
+				{joinGroupModalOpen ? (
+					<Modal setOpenFunction={setJoinGroupModalOpen} title="Join a Group">
+						<div className="flex flex-col">
+							<label htmlFor="text" className="mb-2 font-semibold text-center">
+								Enter Join Code
+							</label>
+							<input
+								type="text"
+								id="joinCode"
+								className="w-full max-w-lg text-black rounded-lg border-4 border-violet-500 px-2 py-1 focus:outline-none"
+							/>
+							<div className="mt-5 flex flex-col justify-end items-end">
+								<CoolButton
 									onClick={() => {
 										const joinCodeInput = document.getElementById("joinCode") as HTMLInputElement;
 										if (joinCodeInput.value === "") {
 											window.alert("Please enter a join code");
 										} else {
 											joinGroup.mutate({
-												joinCode: joinCodeInput.value,
+												joinCode: joinCodeInput.value as string,
 												userId: session?.user?.id as string,
 											});
+											setJoinGroupModalOpen(false);
 										}
 									}}
 								>
-									Join
-								</button>
+									Submit
+								</CoolButton>
 							</div>
 						</div>
-					</div>
-					{
-						// TODO add form to create a group
-					}
-					<div className="w-full rounded-xl bg-white p-4 shadow-2xl shadow-white/40">
-						<p className="mb-8 font-semibold">Created by Gezellligheid</p>
-						<div className="mb-4 grid grid-cols-2 gap-4">
-							<div className="flex flex-col">
-								<label htmlFor="text" className="mb-2 font-semibold">
-									Group Name
-								</label>
-								<input
-									type="text"
-									id="groupName"
-									className="w-full max-w-lg rounded-lg border border-slate-200 px-2 py-1 hover:border-blue-500 focus:outline-none focus:ring focus:ring-blue-500/40 active:ring active:ring-blue-500/40"
-								/>
-							</div>
-							<div className="flex flex-col">
-								<button
-									id="submit"
-									className="w-full max-w-lg rounded-lg border border-slate-200 px-2 py-1 hover:border-blue-500 focus:outline-none focus:ring focus:ring-blue-500/40 active:ring active:ring-blue-500/40"
+					</Modal>
+				) : null}
+				{createGroupModalOpen ? (
+					<Modal setOpenFunction={setCreateGroupModalOpen} title="Create a Group">
+						<div className="flex flex-col">
+							<label htmlFor="text" className="mb-2 font-semibold text-center">
+								Enter Group Name
+							</label>
+							<input
+								type="text"
+								id="groupName"
+								className="w-full max-w-lg text-black rounded-lg border-4 border-violet-500 px-2 py-1 focus:outline-none"
+							/>
+							<div className="mt-5 flex flex-col justify-end items-end">
+								<CoolButton
 									onClick={() => {
 										const groupNameInput = document.getElementById("groupName") as HTMLInputElement;
 										if (groupNameInput.value === "") {
@@ -109,15 +142,16 @@ const Groups: NextPage = () => {
 												name: groupNameInput.value as string,
 												creatorId: session?.user?.id as string,
 											});
+											setCreateGroupModalOpen(false);
 										}
 									}}
 								>
 									Submit
-								</button>
+								</CoolButton>
 							</div>
 						</div>
-					</div>
-				</div>
+					</Modal>
+				) : null}
 			</main>
 		</>
 	);

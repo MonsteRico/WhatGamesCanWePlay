@@ -3,6 +3,7 @@ import Link from "next/link";
 import { signIn, signOut, useSession } from "next-auth/react";
 import logo from "../../public/platRat.png";
 import Image from "next/future/image";
+import CoolButton from "./CoolButton";
 
 export default function NavBar() {
 	const { data: session } = useSession();
@@ -30,6 +31,9 @@ export default function NavBar() {
 						<Link href="/documentation">
 							<a className="text-base font-medium hover:text-neutral-400">About</a>
 						</Link>
+						<Link href="/report">
+							<a className="text-base font-medium hover:text-neutral-400">Report Bugs and Stuff</a>
+						</Link>
 						{user ? (
 							<>
 								<Link href="/library">
@@ -45,17 +49,12 @@ export default function NavBar() {
 						{user ? (
 							<div className="flex items-center justify-between">
 								<p className="text-2xl mr-4 font-medium">{user.name}</p>
-								<button
-									className="p-3 bg-violet-500 rounded"
-									onClick={() => signOut({ callbackUrl: `${window.location.origin}` })}
-								>
+								<CoolButton onClick={() => signOut({ callbackUrl: `${window.location.origin}` })}>
 									Sign Out
-								</button>
+								</CoolButton>
 							</div>
 						) : (
-							<button className="p-3 bg-violet-500 rounded" onClick={() => signIn("discord")}>
-								Sign in with Discord
-							</button>
+							<CoolButton onClick={() => signIn("discord")}>Sign in with Discord</CoolButton>
 						)}
 					</div>
 				</div>

@@ -9,6 +9,7 @@ import GameCover from "../../components/GameCover";
 import { UserSelect } from "../../components/UserSelect";
 import { DeleteButton } from "../../components/DeleteButton";
 import { LeaveButton } from "../../components/LeaveButton";
+import CoolButton from "../../components/CoolButton";
 
 const GroupPage: NextPage = () => {
 	const { data: session } = useSession();
@@ -76,15 +77,14 @@ const GroupPage: NextPage = () => {
 				<main className="container mx-auto flex flex-col items-center justify-center p-4">
 					<div className="grid grid-cols-3 gap-10 items-center w-full mb-10">
 						<div className="flex justify-start items-start">
-							<button
-								className="p-3 bg-violet-500 rounded"
+							<CoolButton
 								onClick={() => {
 									// TODO write need help thing
 									alert("I'm working on writing this!");
 								}}
 							>
 								Need Help?
-							</button>
+							</CoolButton>
 						</div>
 						<div className="flex flex-col justify-start items-center">
 							<h1 className="text-center text-7xl mb-5 px-5 pb-5 font-bold border-violet-500 border-b-4">
@@ -108,15 +108,14 @@ const GroupPage: NextPage = () => {
 							</p>
 						</div>
 						<div className="flex justify-end items-end">
-							<button
-								className="p-3 bg-violet-500 rounded mr-5"
+							<CoolButton
 								onClick={() => {
 									// TODO group settings
 									alert("Editing group settings will come soon!");
 								}}
 							>
 								Group Settings
-							</button>
+							</CoolButton>
 							{isOwner && groupMembers ? (
 								<DeleteButton
 									groupId={groupId}

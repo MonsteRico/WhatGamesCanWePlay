@@ -1,5 +1,6 @@
 import type { NextPage } from "next";
 import Head from "next/head";
+import CoolButton from "../components/CoolButton";
 import NavBar from "../components/NavBar";
 
 type TechnologyCardProps = {
@@ -21,35 +22,20 @@ const Documentation: NextPage = () => {
 				//TODO add about stuff
 			}
 			<main className="container mx-auto flex flex-col items-center justify-center min-h-screen p-4">
-				<h1 className="text-5xl md:text-[5rem] leading-normal font-extrabold text-gray-700">
-					Create <span className="text-purple-300">T3</span> App
-				</h1>
-				<p className="text-2xl md:text-3xl text-gray-500 mb-10">
-					I still need to update this, this came with create t3 app
+				<h1 className="text-5xl md:text-[5rem] leading-normal font-extrabold">Find a bug?</h1>
+				<p>
+					You know how to submit a bug report on GitHub probably, the whole code is on there just do it
+					please. You can also DM Monster#8681 on Discord. Let me know of any bugs you find, anything you
+					think is hard to understand or not intuitive, any design things that should change whatever. All
+					feedback is appreciated. Thank you!
 				</p>
-				<p className="text-2xl text-gray-700">This stack uses:</p>
-				<div className="grid gap-3 pt-3 mt-3 text-center md:grid-cols-2 lg:w-2/3">
-					<TechnologyCard
-						name="NextJS"
-						description="The React framework for production"
-						documentation="https://nextjs.org/"
-					/>
-					<TechnologyCard
-						name="TypeScript"
-						description="Strongly typed programming language that builds on JavaScript, giving you better tooling at any scale"
-						documentation="https://www.typescriptlang.org/"
-					/>
-					<TechnologyCard
-						name="TailwindCSS"
-						description="Rapidly build modern websites without ever leaving your HTML"
-						documentation="https://tailwindcss.com/"
-					/>
-					<TechnologyCard
-						name="tRPC"
-						description="End-to-end typesafe APIs made easy"
-						documentation="https://trpc.io/"
-					/>
-				</div>
+				<CoolButton
+					onClick={() => {
+						window.open("https://github.com/MonsteRico/WhatGamesCanWePlay/");
+					}}
+				>
+					GitHub Link
+				</CoolButton>
 			</main>
 		</>
 	);

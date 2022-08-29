@@ -23,6 +23,11 @@ const Home: NextPage = () => {
 
 			<main className="container mx-auto flex flex-col items-center justify-center min-h-screen p-4">
 				<h1 className="text-5xl">Home Page</h1>
+				<p className="text-2xl">
+					Welcome, {text}! I&apos;ve got plans for the home page but for now it just has this hello example
+					query that I used to initially get started. Ignore this page and head on over to one of the other
+					pages to actually do something!
+				</p>
 				<div className="pt-6 text-2xl text-blue-500 flex justify-center items-center w-full">
 					{hello.data ? <p>{hello.data.greeting}</p> : <p>Loading...</p>}
 				</div>
