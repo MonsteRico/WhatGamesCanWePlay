@@ -136,6 +136,7 @@ export const libraryRouter = createProtectedRouter()
 				if (filteredSteamIds.length !== steamIds.length) {
 					return [];
 				}
+				// TODO fix this
 				const games = await prisma.userInstalledGames.findMany({
 					where: {
 						steamId: {

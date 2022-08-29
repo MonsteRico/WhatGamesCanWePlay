@@ -19,7 +19,7 @@ const Groups: NextPage = () => {
 		steamId = session?.steamId as string;
 	}
 	const hello = trpc.useQuery(["hello.world", { text }]);
-	const groupsQuery = trpc.useQuery(["groups.getGroups"]);
+	const groupsQuery = trpc.useQuery(["groups.getMyGroups"]);
 	const groups = groupsQuery.data;
 	if (groupsQuery.data) {
 		// console.log(groups.data);

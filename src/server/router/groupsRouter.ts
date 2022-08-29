@@ -101,6 +101,50 @@ export const groupsRouter = createProtectedRouter()
 			return groups;
 		},
 	})
+	.query("getMyGroups", {
+		async resolve({ ctx }) {
+			const { prisma } = ctx;
+			const dbGroups = await prisma.group.findMany({
+				where: {
+					GroupMember: {
+						some: {
+							userId: {
+								equals: ctx.session.user.id,
+							},
+						},
+					},
+				},
+			});
+			const groups: Group[] = [];
+			for (let i = 0; i < dbGroups.length; i++) {
+				const group = dbGroups[i];
+				if (group) {
+					const groupMembers = await prisma.groupMember.findMany({
+						where: {
+							group: {
+								id: group.id,
+							},
+						},
+					});
+					const groupCreator = await prisma.groupOwner.findFirst({
+						where: {
+							group: {
+								id: group.id,
+							},
+						},
+					});
+					groups.push({
+						id: group.id,
+						name: group.name,
+						joinCode: group.joinCode,
+						ownerId: groupCreator?.userId as string,
+						memberIds: groupMembers.map((member) => member.userId),
+					});
+				}
+			}
+			return groups;
+		},
+	})
 	.query("getGroup", {
 		input: z.object({
 			groupId: z.string(),
