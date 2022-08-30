@@ -130,6 +130,8 @@ export const libraryRouter = createProtectedRouter()
 					return gameCount === filteredSteamIds.length;
 				});
 				let gameIds = gamesFiltered.map((game) => game.appId);
+				// remove duplicates from gameIds
+				gameIds = gameIds.filter((gameId, index) => gameIds.indexOf(gameId) === index);
 				if (steamIds.length > 1) {
 					gameIds = gameIds.filter(
 						(
