@@ -129,7 +129,7 @@ export const libraryRouter = createProtectedRouter()
 					const gameCount = games.filter((game2) => game2.appId === game.appId).length;
 					return gameCount === filteredSteamIds.length;
 				});
-				let gameIds = games.map((game) => game.appId);
+				let gameIds = gamesFiltered.map((game) => game.appId);
 				if (steamIds.length > 1) {
 					gameIds = gameIds.filter(
 						(
