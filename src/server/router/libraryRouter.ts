@@ -108,41 +108,26 @@ export const libraryRouter = createProtectedRouter()
 		async resolve({ input, ctx }): Promise<any> {
 			const { steamIds } = input;
 			const { prisma } = ctx;
-			// TODO REPLACE THIS WITH A SINGLE QUERY CALL TO THE DATABASE
-			// 			console.log(steamIds);
-			// 			const steamIdsString = steamIds.map((steamId) => `"${steamId}"`);
-			// 			const steamIdsStringJoined = "(" + steamIdsString.join(",") + ")";
-			// 			const games = await prisma.$queryRaw(Prisma.sql`
-			// 				SELECT id FROM (
-			//     (
-			//         SELECT UserInstalledGames.appId AS id, COUNT(UserInstalledGames.steamId) AS amt, items.total AS total
-			//         FROM (
-			//             UserInstalledGames
-			//             CROSS JOIN (
-			//                 SELECT COUNT(DISTINCT UserInstalledGames.steamId) AS total
-			//                     FROM UserInstalledGames WHERE UserInstalledGames.steamId IN ${steamIdsStringJoined}
-			//             ) AS items
-			//         )
-			//         WHERE UserInstalledGames.steamId IN ${steamIdsStringJoined}
-			//         GROUP BY UserInstalledGames.appId
-			//     ) AS table_name
-			// ) where (amt = total)
-			// 				`);
 
 			// if any steamIds are null, remove them
-			if (steamIds) {
+			if (steamIds && steamIds.length > 0) {
 				const filteredSteamIds = steamIds.filter((steamId) => steamId !== null) as string[];
 
 				if (filteredSteamIds.length !== steamIds.length) {
 					return [];
 				}
-				// TODO fix this
 				const games = await prisma.userInstalledGames.findMany({
 					where: {
 						steamId: {
 							in: filteredSteamIds,
 						},
 					},
+				});
+
+				// filter the array to only include games that are in all steamIds
+				const gamesFiltered = games.filter((game) => {
+					const gameCount = games.filter((game2) => game2.appId === game.appId).length;
+					return gameCount === filteredSteamIds.length;
 				});
 				let gameIds = games.map((game) => game.appId);
 				if (steamIds.length > 1) {
