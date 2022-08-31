@@ -21,6 +21,7 @@ export default function NavBar() {
 								src={logo}
 								width={200}
 								height={200}
+								unoptimized
 							></Image>
 						</Link>
 					</div>

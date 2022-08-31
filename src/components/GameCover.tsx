@@ -31,6 +31,7 @@ const GameCover = ({ appId, alt, installed, className, ...rest }: GameCoverProps
 				}}
 				width={300}
 				height={height}
+				unoptimized
 			/>
 		);
 	} else if (appId === OVERWATCH_APPID) {
@@ -46,6 +47,7 @@ const GameCover = ({ appId, alt, installed, className, ...rest }: GameCoverProps
 				}}
 				width={300}
 				height={height}
+				unoptimized
 			/>
 		);
 	} else if (appId === VALORANT_APPID) {
@@ -61,6 +63,7 @@ const GameCover = ({ appId, alt, installed, className, ...rest }: GameCoverProps
 				}}
 				width={300}
 				height={height}
+				unoptimized
 			/>
 		);
 	}
@@ -76,6 +79,7 @@ const GameCover = ({ appId, alt, installed, className, ...rest }: GameCoverProps
 			}}
 			width={300}
 			height={height}
+			unoptimized
 		/>
 	);
 };

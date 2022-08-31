@@ -11,6 +11,13 @@ export default function UserIcon({ src, username }: UserIconProps) {
 		return <div></div>;
 	}
 	return (
-		<Image alt={username + "'s icon"} src={src} width={75} height={75} className="rounded-full cursor-pointer" />
+		<Image
+			alt={username + "'s icon"}
+			src={src}
+			width={75}
+			height={75}
+			className="rounded-full cursor-pointer"
+			unoptimized
+		/>
 	);
 }
