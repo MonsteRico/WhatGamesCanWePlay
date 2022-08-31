@@ -132,14 +132,6 @@ export const libraryRouter = createProtectedRouter()
 				let gameIds = gamesFiltered.map((game) => game.appId);
 				// remove duplicates from gameIds
 				gameIds = gameIds.filter((gameId, index) => gameIds.indexOf(gameId) === index);
-				if (steamIds.length > 1) {
-					gameIds = gameIds.filter(
-						(
-							(s) => (v) =>
-								s.has(v) || !s.add(v)
-						)(new Set())
-					);
-				}
 				return gameIds;
 			}
 		},
