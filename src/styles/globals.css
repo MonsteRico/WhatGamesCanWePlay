@@ -5,3 +5,7 @@
 html {
 	@apply bg-slate-800 text-neutral-200;
 }
+
+.characterOutline {
+	text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+}

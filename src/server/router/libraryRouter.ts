@@ -1,6 +1,7 @@
 import { createProtectedRouter } from "./protected-router";
 import { z } from "zod";
 import { Prisma } from "@prisma/client";
+import { createRouter } from "./context";
 // https://www.npmjs.com/package/steam-api
 
 export const libraryRouter = createProtectedRouter()
@@ -136,3 +137,36 @@ export const libraryRouter = createProtectedRouter()
 			}
 		},
 	});
+
+export const randomGameRouter = createRouter().query("getRandomGames", {
+	input: z.object({
+		number: z.number(),
+	}),
+	async resolve({ input, ctx }): Promise<any> {
+		const { prisma, steam } = ctx;
+		const games = await prisma.userInstalledGames.findMany();
+		const otherGames = await prisma.userUninstalledGames.findMany();
+		const allGames = [...games, ...otherGames];
+		const gameIds = allGames.map((game) => game.appId);
+		const uniqueGameIds = gameIds.filter((gameId, index) => gameIds.indexOf(gameId) === index);
+		const randomGameIds = shuffle(uniqueGameIds).slice(0, input.number);
+		return randomGameIds;
+	},
+});
+
+function shuffle(array: any[]) {
+	let currentIndex = array.length,
+		randomIndex;
+
+	// While there remain elements to shuffle.
+	while (currentIndex != 0) {
+		// Pick a remaining element.
+		randomIndex = Math.floor(Math.random() * currentIndex);
+		currentIndex--;
+
+		// And swap it with the current element.
+		[array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
+	}
+
+	return array;
+}

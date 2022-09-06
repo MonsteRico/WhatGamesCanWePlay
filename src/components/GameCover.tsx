@@ -1,10 +1,11 @@
 import React, { useState } from "react";
-import Image from "next/image";
+import Image, { StaticImageData } from "next/image";
 import { trpc } from "../utils/trpc";
 import { LEAGUE_OF_LEGENDS_APPID, OVERWATCH_APPID, VALORANT_APPID } from "../utils/gameConstants";
 import leagueCover from "../../public/leagueCover.jpg";
 import overwatchCover from "../../public/overwatchCover.jpg";
 import valorantCover from "../../public/valorantCover.png";
+import genericCover from "../../public/genericCover.jpg";
 interface GameCoverProps {
 	appId: string;
 	alt: string;
@@ -13,11 +14,17 @@ interface GameCoverProps {
 }
 
 const GameCover = ({ appId, alt, installed, className, ...rest }: GameCoverProps) => {
-	const [imgSrc, setImgSrc] = useState(`https://steamcdn-a.akamaihd.net/steam/apps/${appId}/library_600x900.jpg`);
-	const fallbackSrc = `https://cdn.akamai.steamstatic.com/steam/apps/${appId}/header.jpg`;
+	const [imgSrc, setImgSrc] = useState<string | StaticImageData>(
+		`https://steamcdn-a.akamaihd.net/steam/apps/${appId}/library_600x900.jpg`
+	);
+	const [fallbackSrc, setFallbackSrc] = useState<string | StaticImageData>(
+		`https://cdn.akamai.steamstatic.com/steam/apps/${appId}/header.jpg`
+	);
+	const firstFallbackSrc = `https://cdn.akamai.steamstatic.com/steam/apps/${appId}/header.jpg`;
+	const finalFallbackSrc = `https://cdn.akamai.steamstatic.com/steam/apps/20/library_600x900.jpg`;
 	// check if imgSrc is valid
 	const width = 300;
-	const height = imgSrc !== fallbackSrc ? 450 : 140;
+	const height = 450;
 	if (appId === LEAGUE_OF_LEGENDS_APPID) {
 		return (
 			<Image
@@ -25,10 +32,6 @@ const GameCover = ({ appId, alt, installed, className, ...rest }: GameCoverProps
 				{...rest}
 				alt={alt}
 				src={leagueCover}
-				onError={() => {
-					console.log("fallback", fallbackSrc);
-					setImgSrc(fallbackSrc);
-				}}
 				width={300}
 				height={height}
 				unoptimized
@@ -41,10 +44,6 @@ const GameCover = ({ appId, alt, installed, className, ...rest }: GameCoverProps
 				{...rest}
 				alt={alt}
 				src={overwatchCover}
-				onError={() => {
-					console.log("fallback", fallbackSrc);
-					setImgSrc(fallbackSrc);
-				}}
 				width={300}
 				height={height}
 				unoptimized
@@ -57,14 +56,42 @@ const GameCover = ({ appId, alt, installed, className, ...rest }: GameCoverProps
 				{...rest}
 				alt={alt}
 				src={valorantCover}
-				onError={() => {
-					console.log("fallback", fallbackSrc);
-					setImgSrc(fallbackSrc);
-				}}
 				width={300}
 				height={height}
 				unoptimized
 			/>
+		);
+	}
+	if (imgSrc == firstFallbackSrc) {
+		return (
+			<div className="relative">
+				<Image
+					src={imgSrc}
+					width={width}
+					height={height}
+					alt={alt}
+					style={{
+						filter: "blur(10px)",
+					}}
+					onError={() => {
+						console.log("fallback", fallbackSrc);
+						setImgSrc(fallbackSrc);
+						setFallbackSrc(genericCover);
+					}}
+					unoptimized
+				></Image>
+				<div className="absolute top-14">
+					<Image
+						className={installed ? " " : " grayscale"}
+						{...rest}
+						alt={alt}
+						src={imgSrc}
+						width={300}
+						height={140}
+						unoptimized
+					/>
+				</div>
+			</div>
 		);
 	}
 	return (
@@ -76,6 +103,7 @@ const GameCover = ({ appId, alt, installed, className, ...rest }: GameCoverProps
 			onError={() => {
 				console.log("fallback", fallbackSrc);
 				setImgSrc(fallbackSrc);
+				setFallbackSrc(genericCover);
 			}}
 			width={300}
 			height={height}
