@@ -16,36 +16,53 @@ const Home: NextPage = () => {
 		text = session?.user?.name as string;
 		steamId = session?.steamId as string;
 	}
+	let arr: any[] = [];
 	const { width, height } = useWindowDimensions();
-	// create an array with 30 elements
-	// TODO manually set the grid-template-columns to be numberColumns columns same for rows
-	let numberColumns = 0;
-	let numberRows = 0;
-	const arr = [];
 	if (width && height) {
-		// Round number columns to a multiple of 3
-		numberRows = Math.ceil(height / 350);
-		numberColumns = Math.ceil(width / 200);
-		numberColumns = 9;
-		numberRows = 3;
-		// if (numberColumns % 3 !== 0) {
-		// 	numberColumns = Math.ceil(numberColumns / 3) * 3;
-		// 	if (numberColumns > 9) {
-		// 		numberColumns = 9;
-		// 	}
-		// }
-		// if (numberRows % 3 !== 0) {
-		// 	numberRows = Math.ceil(numberRows / 3) * 3;
-		// 	if (numberRows > 4) {
-		// 		numberRows = 4;
-		// 	}
-		// }
-		for (let i = 0; i < numberRows * numberColumns; i++) {
+		let numCols = 2;
+		let numRows = 3;
+		if (height > 1000) {
+			numRows = 4;
+		}
+		if (width >= 640) {
+			numCols = 3;
+			numRows = 3;
+			if (height > 1000) {
+				numRows = 4;
+			}
+		}
+		if (width >= 768) {
+			numCols = 4;
+			numRows = 3;
+			if (height > 1000) {
+				numRows = 4;
+			}
+		}
+		if (width >= 1024) {
+			numCols = 6;
+			numRows = 3;
+			if (height > 1000) {
+				numRows = 4;
+			}
+		}
+		if (width >= 1280) {
+			numCols = 7;
+			numRows = 3;
+			if (height > 1000) {
+				numRows = 4;
+			}
+		}
+		if (width >= 1536) {
+			numCols = 9;
+			numRows = 3;
+		}
+		if (width >= 2048) {
+			numCols = 9;
+			numRows = 4;
+		}
+		for (let i = 0; i < numCols * numRows; i++) {
 			arr.push(i);
 		}
-
-		console.log("numberRows", numberRows);
-		console.log("numberColumns", numberColumns);
 	}
 	const randomAppIdsQuery = trpc.useQuery(["randomGame.getRandomGames", { number: arr.length }], {
 		refetchOnWindowFocus: false,
@@ -59,7 +76,16 @@ const Home: NextPage = () => {
 				<link rel="icon" href="/favicon.ico" />
 			</Head>
 			<NavBar></NavBar>
-			<div className={`grid grid-cols-9 grid-rows-3 overflow-hidden z-1`}>
+			<div
+				className="grid xs:grid-cols-2 xs:grid-rows-3
+				3xl:grid-cols-9 3xl:grid-rows-4
+				 sm:grid-cols-3 sm:grid-rows-3
+				 lg:grid-rows-3 lg:grid-cols-6
+				 xl:grid-rows-3 xl:grid-cols-7
+				 2xl:grid-rows-3 2xl:grid-cols-9
+				  md:grid-rows-3 md:grid-cols-4
+				   overflow-hidden z-1"
+			>
 				{randomAppIdsQuery.data &&
 					arr.map((i) => {
 						const middleRow = i > 8 && i < 17;
@@ -68,7 +94,7 @@ const Home: NextPage = () => {
 								key={i}
 								initial={{ opacity: 0, rotateY: 180 }}
 								animate={{ opacity: 1, rotateY: 0 }}
-								transition={{ duration: 0.25, delay: (i % numberColumns) * 0.1 }}
+								transition={{ duration: 0.25, delay: Math.random() * 0.5 }}
 								className="col-span-1 row-span-1 p-5"
 								style={{ width: "200px", height: "300px" }}
 							>
@@ -99,7 +125,7 @@ const Home: NextPage = () => {
 			</div>
 			<div
 				style={{ top: "6.75em" }}
-				className={`bg-black z-2 grid grid-cols-${numberColumns} grid-rows-${numberRows} absolute left-0 h-full w-full bg-opacity-70 border-b-2 border-violet-500`}
+				className={`bg-black z-2 absolute left-0 h-full w-full bg-opacity-70 border-b-2 border-violet-500`}
 			>
 				<div style={{ height: "300px", width: "200px" }}></div>
 			</div>
@@ -110,7 +136,7 @@ const Home: NextPage = () => {
 					initial={{ opacity: 0, y: 100 }}
 					transition={{ duration: 0.5, delay: 0.5 }}
 					ref={scrollRef}
-					className="mb-64 mt-32 flex flex-col justify-center items-center mx-auto w-full"
+					className="mb-64 flex flex-col justify-center items-center mx-auto w-full"
 				>
 					<h1 className="text-center text-7xl mb-5 px-5 pb-5 font-bold border-violet-500 border-b-4">
 						How does it work?

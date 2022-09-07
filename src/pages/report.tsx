@@ -18,9 +18,6 @@ const Documentation: NextPage = () => {
 				<link rel="icon" href="/favicon.ico" />
 			</Head>
 			<NavBar></NavBar>
-			{
-				//TODO add about stuff
-			}
 			<main className="container mx-auto flex flex-col items-center justify-center min-h-screen p-4">
 				<h1 className="text-5xl md:text-[5rem] leading-normal font-extrabold">Find a bug?</h1>
 				<p>

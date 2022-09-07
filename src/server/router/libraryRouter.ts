@@ -2,6 +2,7 @@ import { createProtectedRouter } from "./protected-router";
 import { z } from "zod";
 import { Prisma } from "@prisma/client";
 import { createRouter } from "./context";
+import safeAppIds from "../../utils/homeScreenAppIds";
 // https://www.npmjs.com/package/steam-api
 
 export const libraryRouter = createProtectedRouter()
@@ -144,10 +145,7 @@ export const randomGameRouter = createRouter().query("getRandomGames", {
 	}),
 	async resolve({ input, ctx }): Promise<any> {
 		const { prisma, steam } = ctx;
-		const games = await prisma.userInstalledGames.findMany();
-		const otherGames = await prisma.userUninstalledGames.findMany();
-		const allGames = [...games, ...otherGames];
-		const gameIds = allGames.map((game) => game.appId);
+		const gameIds = safeAppIds;
 		const uniqueGameIds = gameIds.filter((gameId, index) => gameIds.indexOf(gameId) === index);
 		const randomGameIds = shuffle(uniqueGameIds).slice(0, input.number);
 		return randomGameIds;
