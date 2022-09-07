@@ -59,9 +59,7 @@ const Home: NextPage = () => {
 				<link rel="icon" href="/favicon.ico" />
 			</Head>
 			<NavBar></NavBar>
-			<div
-				className={`grid grid-cols-${numberColumns} col-span-12 row-span-6 grid-rows-${numberRows} overflow-hidden z-1`}
-			>
+			<div className={`grid grid-cols-9 grid-rows-3 overflow-hidden z-1`}>
 				{randomAppIdsQuery.data &&
 					arr.map((i) => {
 						const middleRow = i > 8 && i < 17;
