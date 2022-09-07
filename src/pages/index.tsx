@@ -26,24 +26,24 @@ const Home: NextPage = () => {
 		// Round number columns to a multiple of 3
 		numberRows = Math.ceil(height / 350);
 		numberColumns = Math.ceil(width / 200);
-		console.log(height / 450);
-		if (numberColumns % 3 !== 0) {
-			numberColumns = Math.ceil(numberColumns / 3) * 3;
-			if (numberColumns > 9) {
-				numberColumns = 9;
-			}
-		}
-		if (numberRows % 3 !== 0) {
-			numberRows = Math.ceil(numberRows / 3) * 3;
-			if (numberRows > 4) {
-				numberRows = 4;
-			}
-		}
+		numberColumns = 9;
+		numberRows = 3;
+		// if (numberColumns % 3 !== 0) {
+		// 	numberColumns = Math.ceil(numberColumns / 3) * 3;
+		// 	if (numberColumns > 9) {
+		// 		numberColumns = 9;
+		// 	}
+		// }
+		// if (numberRows % 3 !== 0) {
+		// 	numberRows = Math.ceil(numberRows / 3) * 3;
+		// 	if (numberRows > 4) {
+		// 		numberRows = 4;
+		// 	}
+		// }
 		for (let i = 0; i < numberRows * numberColumns; i++) {
 			arr.push(i);
 		}
-		numberColumns = 9;
-		numberRows = 3;
+
 		console.log("numberRows", numberRows);
 		console.log("numberColumns", numberColumns);
 	}
