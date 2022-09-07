@@ -18,6 +18,7 @@ const Home: NextPage = () => {
 	}
 	const { width, height } = useWindowDimensions();
 	// create an array with 30 elements
+	// TODO manually set the grid-template-columns to be numberColumns columns same for rows
 	let numberColumns = 0;
 	let numberRows = 0;
 	const arr = [];
@@ -41,6 +42,8 @@ const Home: NextPage = () => {
 		for (let i = 0; i < numberRows * numberColumns; i++) {
 			arr.push(i);
 		}
+		numberColumns = 9;
+		numberRows = 3;
 		console.log("numberRows", numberRows);
 		console.log("numberColumns", numberColumns);
 	}
