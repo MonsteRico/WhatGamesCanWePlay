@@ -8,6 +8,7 @@ import GameCover from "../components/GameCover";
 import CoolButton from "../components/CoolButton";
 import { useRef } from "react";
 import useWindowDimensions from "../utils/useWindowDimensions";
+import safeAppIds from "../utils/homeScreenAppIds";
 const Home: NextPage = () => {
 	const { data: session } = useSession();
 	let text: string = "World";
@@ -16,7 +17,7 @@ const Home: NextPage = () => {
 		text = session?.user?.name as string;
 		steamId = session?.steamId as string;
 	}
-	let arr: any[] = [];
+	let arr: any[] = ["placeholder"];
 	const { width, height } = useWindowDimensions();
 	if (width && height) {
 		let numCols = 2;
@@ -60,13 +61,37 @@ const Home: NextPage = () => {
 			numCols = 9;
 			numRows = 4;
 		}
+		arr = [];
 		for (let i = 0; i < numCols * numRows; i++) {
 			arr.push(i);
 		}
 	}
-	const randomAppIdsQuery = trpc.useQuery(["randomGame.getRandomGames", { number: arr.length }], {
-		refetchOnWindowFocus: false,
-	});
+	const getRandomGames = (number: number): string[] => {
+		const gameIds = safeAppIds;
+		const uniqueGameIds = gameIds.filter((gameId, index) => gameIds.indexOf(gameId) === index);
+		const randomGameIds = shuffle(uniqueGameIds).slice(0, number);
+		return randomGameIds;
+	};
+
+	const shuffle = (array: any[]) => {
+		let currentIndex = array.length,
+			randomIndex;
+
+		// While there remain elements to shuffle.
+		while (currentIndex != 0) {
+			// Pick a remaining element.
+			randomIndex = Math.floor(Math.random() * currentIndex);
+			currentIndex--;
+
+			// And swap it with the current element.
+			[array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
+		}
+
+		return array;
+	};
+
+	const randomGames = getRandomGames(arr.length);
+
 	const scrollRef = useRef<any>(null);
 	return (
 		<>
@@ -86,9 +111,8 @@ const Home: NextPage = () => {
 				  md:grid-rows-3 md:grid-cols-4
 				   overflow-hidden z-1"
 			>
-				{randomAppIdsQuery.data &&
+				{randomGames &&
 					arr.map((i) => {
-						const middleRow = i > 8 && i < 17;
 						return (
 							<motion.div
 								key={i}
@@ -98,7 +122,7 @@ const Home: NextPage = () => {
 								className="col-span-1 row-span-1 p-5"
 								style={{ width: "200px", height: "300px" }}
 							>
-								<GameCover alt="Game Cover" appId={randomAppIdsQuery.data[i]} installed />
+								<GameCover alt="Game Cover" appId={randomGames[i] as string} installed />
 							</motion.div>
 						);
 					})}
@@ -132,9 +156,9 @@ const Home: NextPage = () => {
 
 			<main className="container mx-auto flex flex-col items-center justify-center align-center p-4">
 				<motion.div
-					animate={{ opacity: 1, y: 0 }}
-					initial={{ opacity: 0, y: 100 }}
-					transition={{ duration: 0.5, delay: 0.5 }}
+					// animate={{ opacity: 1, y: 0 }}
+					// initial={{ opacity: 0, y: 100 }}
+					// transition={{ duration: 0.5, delay: 0.5 }}
 					ref={scrollRef}
 					className="mb-64 flex flex-col justify-center items-center mx-auto w-full"
 				>

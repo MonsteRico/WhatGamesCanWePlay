@@ -14,17 +14,29 @@ interface GameCoverProps {
 }
 
 const GameCover = ({ appId, alt, installed, className, ...rest }: GameCoverProps) => {
-	const [imgSrc, setImgSrc] = useState<string | StaticImageData>(
-		`https://steamcdn-a.akamaihd.net/steam/apps/${appId}/library_600x900.jpg`
-	);
+	const width = 300;
+	const height = 450;
+	let initialImgSrc:
+		| string
+		| StaticImageData = `https://steamcdn-a.akamaihd.net/steam/apps/${appId}/library_600x900.jpg`;
+	if (appId === LEAGUE_OF_LEGENDS_APPID) {
+		initialImgSrc = leagueCover;
+	}
+	if (appId === OVERWATCH_APPID) {
+		initialImgSrc = overwatchCover;
+	}
+	if (appId === VALORANT_APPID) {
+		initialImgSrc = valorantCover;
+	}
+
+	const [imgSrc, setImgSrc] = useState<string | StaticImageData>(initialImgSrc);
 	const [fallbackSrc, setFallbackSrc] = useState<string | StaticImageData>(
 		`https://cdn.akamai.steamstatic.com/steam/apps/${appId}/header.jpg`
 	);
 	const firstFallbackSrc = `https://cdn.akamai.steamstatic.com/steam/apps/${appId}/header.jpg`;
 	const finalFallbackSrc = `https://cdn.akamai.steamstatic.com/steam/apps/20/library_600x900.jpg`;
 	// check if imgSrc is valid
-	const width = 300;
-	const height = 450;
+
 	if (appId === LEAGUE_OF_LEGENDS_APPID) {
 		return (
 			<Image
@@ -37,7 +49,8 @@ const GameCover = ({ appId, alt, installed, className, ...rest }: GameCoverProps
 				unoptimized
 			/>
 		);
-	} else if (appId === OVERWATCH_APPID) {
+	}
+	if (appId === OVERWATCH_APPID) {
 		return (
 			<Image
 				className={className + (installed ? " " : " grayscale")}
@@ -49,7 +62,8 @@ const GameCover = ({ appId, alt, installed, className, ...rest }: GameCoverProps
 				unoptimized
 			/>
 		);
-	} else if (appId === VALORANT_APPID) {
+	}
+	if (appId === VALORANT_APPID) {
 		return (
 			<Image
 				className={className + (installed ? " " : " grayscale")}
@@ -62,7 +76,9 @@ const GameCover = ({ appId, alt, installed, className, ...rest }: GameCoverProps
 			/>
 		);
 	}
-	if (imgSrc == firstFallbackSrc) {
+
+	if (imgSrc == firstFallbackSrc && !(parseInt(appId) < 0)) {
+		console.log("first fallback");
 		return (
 			<div className="relative">
 				<Image
@@ -94,6 +110,7 @@ const GameCover = ({ appId, alt, installed, className, ...rest }: GameCoverProps
 			</div>
 		);
 	}
+
 	return (
 		<Image
 			className={className + (installed ? " " : " grayscale")}
