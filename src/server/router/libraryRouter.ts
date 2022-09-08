@@ -13,9 +13,15 @@ export const libraryRouter = createProtectedRouter()
 		async resolve({ input, ctx }) {
 			const { steamId } = input;
 			const { steam } = ctx;
-			const games = await steam.getUserOwnedGames(steamId as string);
-			// console.log(games);
-			return games;
+			console.log("pregames");
+			try {
+				const games = await steam.getUserOwnedGames(steamId as string);
+				console.log("games");
+				console.log(games);
+				return games;
+			} catch (e) {
+				return [null];
+			}
 		},
 	})
 	.query("getGame", {
@@ -136,5 +142,42 @@ export const libraryRouter = createProtectedRouter()
 				gameIds = gameIds.filter((gameId, index) => gameIds.indexOf(gameId) === index);
 				return gameIds;
 			}
+		},
+	})
+	.mutation("setUserSteamId", {
+		input: z.object({
+			steamId: z.string(),
+		}),
+		async resolve({ input, ctx }) {
+			const { steamId } = input;
+			const { prisma, session } = ctx;
+			const user = session.user;
+			await prisma.user.update({
+				where: {
+					id: user.id,
+				},
+				data: {
+					steamId,
+				},
+			});
+			if (user.steamId) {
+				await prisma.userInstalledGames.updateMany({
+					where: {
+						steamId: user.steamId,
+					},
+					data: {
+						steamId,
+					},
+				});
+				await prisma.userUninstalledGames.updateMany({
+					where: {
+						steamId: user.steamId,
+					},
+					data: {
+						steamId,
+					},
+				});
+			}
+			return true;
 		},
 	});

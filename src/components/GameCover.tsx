@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import Image, { StaticImageData } from "next/image";
 import { trpc } from "../utils/trpc";
-import { LEAGUE_OF_LEGENDS_APPID, OVERWATCH_APPID, VALORANT_APPID } from "../utils/gameConstants";
+import { ERROR_GAME_APPID, LEAGUE_OF_LEGENDS_APPID, OVERWATCH_APPID, VALORANT_APPID } from "../utils/gameConstants";
 import leagueCover from "../../public/leagueCover.jpg";
+import errorCover from "../../public/errorCover.jpg";
 import overwatchCover from "../../public/overwatchCover.jpg";
 import valorantCover from "../../public/valorantCover.png";
 import genericCover from "../../public/genericCover.jpg";
@@ -27,6 +28,9 @@ const GameCover = ({ appId, alt, installed, className, ...rest }: GameCoverProps
 	}
 	if (appId === VALORANT_APPID) {
 		initialImgSrc = valorantCover;
+	}
+	if (appId === ERROR_GAME_APPID) {
+		initialImgSrc = errorCover;
 	}
 
 	const [imgSrc, setImgSrc] = useState<string | StaticImageData>(initialImgSrc);

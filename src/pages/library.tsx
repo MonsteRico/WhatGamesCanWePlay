@@ -9,8 +9,9 @@ import GameCover from "../components/GameCover";
 import { UserInstalledGames } from "@prisma/client";
 import { Session } from "next-auth";
 import LibraryGame from "../components/LibraryGame";
-import { LEAGUE_OF_LEGENDS, OVERWATCH, VALORANT } from "../utils/gameConstants";
+import { ERROR_GAME, ERROR_GAME_APPID, LEAGUE_OF_LEGENDS, OVERWATCH, VALORANT } from "../utils/gameConstants";
 import { useEffect } from "react";
+import SetSteamIdContent from "../components/SetSteamIdContent";
 
 const Library: NextPage = () => {
 	const { data: session } = useSession();
@@ -20,6 +21,7 @@ const Library: NextPage = () => {
 	if (session) {
 		text = session?.user?.name as string;
 		steamId = session?.user?.steamId as string;
+		console.log("steamId: " + steamId);
 	}
 
 	const mutation = trpc.useMutation(["library.toggleGameInstalled"], {
@@ -27,11 +29,16 @@ const Library: NextPage = () => {
 			utils.invalidateQueries("library.getUserInstalledGames");
 		},
 	});
+
 	const gamesQuery = trpc.useQuery(["library.getSteamGames", { steamId }]);
-	const games = gamesQuery?.data?.map((game) => {
+	const ownedGames = gamesQuery?.data?.map((game) => {
 		return game as OwnedGame;
 	});
-	games?.push(LEAGUE_OF_LEGENDS, OVERWATCH, VALORANT);
+	const games = [];
+	if (ownedGames) {
+		games.push(...ownedGames);
+	}
+	games.push(LEAGUE_OF_LEGENDS, OVERWATCH, VALORANT);
 	const installedGames = trpc.useQuery([
 		"library.getUserInstalledGames",
 		{ steamId: session?.user?.steamId as string },
@@ -73,6 +80,17 @@ const Library: NextPage = () => {
 							<>
 								<div id="games" className="grid grid-cols-6 gap-10 w-full">
 									{games.map((game: OwnedGame) => {
+										if (!game) {
+											return (
+												<LibraryGame
+													key={ERROR_GAME_APPID}
+													session={session}
+													gameInstalled={true}
+													toggleInstall={toggleInstall}
+													game={ERROR_GAME}
+												></LibraryGame>
+											);
+										}
 										const gameInstalled = installedGames.data?.includes(
 											game.appId.toString()
 										) as boolean;
@@ -94,15 +112,7 @@ const Library: NextPage = () => {
 						)}
 					</>
 				) : (
-					<div>
-						<p>You do not have a linked Steam id.</p>
-						<p>please link it :)</p>
-						{
-							// TODO
-							// optionally have an option to link a steam account manually
-							// also can link to the link steam account page
-						}
-					</div>
+					<SetSteamIdContent />
 				)}
 			</main>
 		</>

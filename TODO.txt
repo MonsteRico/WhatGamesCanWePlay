@@ -1,6 +1,4 @@
-- able to link steam id to account without having the discord connection set up
-- able to use website without steam id linked
-- about page
+- about page EDIT
 - help modal on group pages
 - settings modal on group pages
 - group settings

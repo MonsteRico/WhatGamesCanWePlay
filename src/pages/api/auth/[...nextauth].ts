@@ -51,7 +51,7 @@ export const authOptions: NextAuthOptions = {
 							},
 						});
 						if (!installedGame && !uninstalledGame) {
-							console.log("Installing game");
+							// console.log("Installing game");
 							await prisma.userInstalledGames.create({
 								data: {
 									steamId,
