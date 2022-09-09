@@ -11,7 +11,8 @@ export default function NavBar() {
 	const { data: session } = useSession();
 	const user = session?.user;
 	const [steamIdModalOpen, setSteamIdModalOpen] = useState(false);
-
+	console.log("user: " + user);
+	console.log("steamId" + user?.steamId);
 	return (
 		<>
 			<div className="relative bg-slate-600 border-b-4 border-violet-500">
@@ -51,7 +52,7 @@ export default function NavBar() {
 							) : null}
 						</nav>
 						<div className="md:flex items-center justify-end md:flex-1 lg:w-0">
-							{user?.steamId ? null : (
+							{user?.steamId == null && user !== undefined ? (
 								<button
 									className="p-3 bg-red-700 mr-4 rounded"
 									onClick={() => {
@@ -60,7 +61,7 @@ export default function NavBar() {
 								>
 									Missing Steam ID!
 								</button>
-							)}
+							) : null}
 							{user ? (
 								<div className="flex items-center justify-between">
 									<p className="text-2xl mr-4 font-medium">{user.name}</p>

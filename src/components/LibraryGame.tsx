@@ -4,6 +4,7 @@ import React from "react";
 import { OwnedGame } from "type-steamapi";
 import {
 	ERROR_GAME,
+	ERROR_GAME_APPID,
 	LEAGUE_OF_LEGENDS,
 	LEAGUE_OF_LEGENDS_APPID,
 	OVERWATCH_APPID,
@@ -35,7 +36,12 @@ export default function LibraryGame({ gameInstalled, game, toggleInstall, sessio
 				document.getElementById("hover" + game.appId.toString())?.classList.remove("z-10");
 				document.getElementById("cover" + game.appId.toString())?.classList.remove("opacity-5");
 			}}
-			className="text-center self-center content-center relative"
+			onClick={() => {
+				if (game.appId !== ERROR_GAME_APPID) {
+					toggleInstall(session, game, gameInstalled);
+				}
+			}}
+			className="text-center self-center content-center relative cursor-pointer"
 		>
 			<div
 				style={{ top: "100px" }}
