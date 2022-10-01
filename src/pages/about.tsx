@@ -2,12 +2,6 @@ import type { NextPage } from "next";
 import Head from "next/head";
 import NavBar from "../components/NavBar";
 
-type TechnologyCardProps = {
-	name: string;
-	description: string;
-	documentation: string;
-};
-
 const About: NextPage = () => {
 	return (
 		<>
@@ -24,17 +18,16 @@ const About: NextPage = () => {
 					<div className="flex flex-col w-1/2 p-10">
 						<h2 className="mb-3 text-center text-4xl">Who made this?</h2>
 						<p>
-							My name is Matthew, and I am an avid gamer and programmer. My main game is Overwatch, and my
-							main programming language is TypeScript/JavaScript. I am very interested in web design and
-							creating things that can help other people. I am currently attending Purdue University
-							studying Computer Science. There&apos;s really not much more you need to know about me on
-							this website honestly. If you are curious at looking at some of my other work, you can check
-							out my GitHub page{" "}
+							My name is Matthew, and I am an avid gamer and programmer. I mainly play Overwatch, but also
+							mess around in other games like CS:GO, League of Legends and more. My main programming
+							language is TypeScript/JavaScript. I am very interested in web design and enjoy creating
+							beneficial things for others. I currently attend Purdue University, majoring in Computer
+							Science. If you&apos;re curious to check out my other work, check out my GitHub page{" "}
 							<a className="text-violet-500 underline" href="https://github.com/MonsteRico">
 								here
 							</a>
-							. I&apos;m also starting work on my portfolio website, and will link that here as soon as
-							it&apos;s ready. Thank you for checking out this website!
+							. I&apos;m currently working on my portfolio website, and will link it as soon as it&apos;s
+							ready. That&apos;s about it! Thanks for checking out the site! Enjoy! :){" "}
 						</p>
 					</div>
 					<div className="w-1/2 bg-red-500"></div>

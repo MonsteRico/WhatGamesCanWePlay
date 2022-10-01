@@ -124,7 +124,7 @@ export async function getServerSideProps(context: any) {
 	if (!session) {
 		return {
 			redirect: {
-				destination: "/",
+				destination: "/signin/library",
 				permanent: false,
 			},
 		};
@@ -135,5 +135,4 @@ export async function getServerSideProps(context: any) {
 		},
 	};
 }
-
 export default Library;

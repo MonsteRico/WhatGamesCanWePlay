@@ -12,7 +12,6 @@ export const groupsRouter = createProtectedRouter()
 		async resolve({ input, ctx }): Promise<Group> {
 			const { name, creatorId: ownerId } = input;
 			const { prisma } = ctx;
-			// TODO better way of generating join code
 			let joinCode = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
 			let group = await prisma.group.create({
 				data: {

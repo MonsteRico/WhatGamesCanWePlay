@@ -1,21 +1,28 @@
+MVP NEEDS THIS STUFF
 - about page EDIT
 - help modal on group pages
+
+- logo (potentially animated?)
+- "decide for me" button on group page to pick a random game from the currently shown list
+    - should have animation of spinning wheel when deciding b/c fun
+
+
+
+THIS IS FOR LATER
 - settings modal on group pages
 - group settings
     - blacklist games
     - edit group name
     - kick group members
     - free web games like skribbl.io
-- better group joining system
+- better group joining system? might be unnecessary
     - use pregenerated links rather than join codes
-    - also generate qr codes
     - keep join codes as an option
+- search games on individual group page and library page
+- sort games by alphabetical, steam id, hours played, etc on individual group page and library page
 - secret in footer to submit games to be added to the home page list of safe app ids
 - secret konami code thing
 - mobile friendly
 - animations throughout
-- logo (potentially animated?)
 - redirect from group page to groups page if trying to access a group that doesn't exist or you're not in
-- "decide for me" button on group page to pick a random game from the currently shown list
-    - should have animation of spinning wheel when deciding b/c fun
 - code clean up
