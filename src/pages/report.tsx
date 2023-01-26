@@ -21,10 +21,9 @@ const Documentation: NextPage = () => {
 			<main className="container mx-auto flex flex-col items-center justify-center min-h-screen p-4">
 				<h1 className="text-5xl md:text-[5rem] leading-normal font-extrabold">Find a bug?</h1>
 				<p>
-					You know how to submit a bug report on GitHub probably, the whole code is on there just do it
-					please. You can also DM Monster#8681 on Discord. Let me know of any bugs you find, anything you
-					think is hard to understand or not intuitive, any design things that should change whatever. All
-					feedback is appreciated. Thank you!
+					Bugs can be submitted to the public GitHub Repository (button below)! You can also DM Monster#8681
+					on Discord. Let me know of any bugs you find, anything you think is hard to understand or not
+					intuitive, any design things that should change whatever. All feedback is appreciated. Thank you!
 				</p>
 				<CoolButton
 					onClick={() => {
