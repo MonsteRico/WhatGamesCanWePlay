@@ -1,6 +1,11 @@
 import type { NextPage } from "next";
 import Head from "next/head";
+import Image from "next/image";
 import NavBar from "../components/NavBar";
+import purpleLogo from "../logoStuff/purpleBGLogo.png";
+import purdue from "../images/purdue.png";
+import typescript from "../images/typescript.png";
+import game from "../images/game.png";
 
 const About: NextPage = () => {
 	return (
@@ -14,7 +19,7 @@ const About: NextPage = () => {
 			<main className="container mx-auto flex flex-col items-center justify-center p-4">
 				<h1 className="text-center text-7xl mb-5 px-5 pb-5 font-bold border-violet-500 border-b-4">About</h1>
 				<p className="text-center text-4xl w-3/4">All the info about this website!</p>
-				<div className="flex flex-row">
+				<div className="mt-20 flex flex-row">
 					<div className="flex flex-col w-1/2 p-10">
 						<h2 className="mb-3 text-center text-4xl">Who made this?</h2>
 						<p>
@@ -30,11 +35,40 @@ const About: NextPage = () => {
 							ready. That&apos;s about it! Thanks for checking out the site! Enjoy! :){" "}
 						</p>
 					</div>
-					<div className="w-1/2 bg-red-500"></div>
+					<div
+						style={{
+							display: "flex",
+							justifyContent: "center",
+						}}
+						className="flex flex-row w-1/2 p-10"
+					>
+						<Image
+							className="rounded-md"
+							unoptimized
+							width={500}
+							height={300}
+							src={purdue}
+							alt="Purdue University Logo"
+						/>
+					</div>
 				</div>
 				<div className="flex flex-row">
-					<div className="w-1/2 bg-red-500"></div>
-
+					<div
+						style={{
+							display: "flex",
+							justifyContent: "center",
+						}}
+						className="flex flex-row w-1/2 p-10"
+					>
+						<Image
+							className="rounded-md"
+							unoptimized
+							width={500}
+							height={500}
+							src={game}
+							alt="Game controller"
+						/>
+					</div>
 					<div className="flex flex-col w-1/2 p-10">
 						<h2 className="mb-3 text-center text-4xl">Why did you make this?</h2>
 						<p>
@@ -77,7 +111,54 @@ const About: NextPage = () => {
 							</a>
 						</p>
 					</div>
-					<div className="w-1/2 bg-red-500"></div>
+					<div
+						style={{
+							display: "flex",
+							justifyContent: "center",
+						}}
+						className="flex flex-row w-1/2 p-10"
+					>
+						<Image
+							className="rounded-md"
+							unoptimized
+							width={300}
+							height={300}
+							src={typescript}
+							alt="TypeScript Logo"
+						/>
+					</div>
+				</div>
+				<div className="flex flex-row">
+					<div
+						style={{
+							display: "flex",
+							justifyContent: "center",
+						}}
+						className="flex flex-row w-1/2 "
+					>
+						<Image
+							className="rounded-md"
+							unoptimized
+							width={700}
+							height={500}
+							src={purpleLogo}
+							alt="Hummingbird Logo"
+						/>
+					</div>
+
+					<div className="flex flex-col w-1/2 p-10">
+						<h2 className="mb-3 text-center text-4xl">Why the bird?</h2>
+						<p>
+							I will let my graphic designer Riyuu answer this one. &quot;Every PC gamer is familiar with
+							Discord and Twitch with their cute little purple mascots. Hyperbeam, an application with a
+							similar UI meant to stream videos, TV shows, and movies to your friends, also has an
+							adorable purple creature as its mascot. So I thought, as another website meant to help
+							connect gamers, why not add to this family? As a huge fan of symbolism, I chose the
+							hummingbird because it popularly symbolizes connection, joy, and enjoying the little things
+							in life. So now you can thank the tiny speedy wifi bird for helping to connect you and your
+							friends, literally and metaphorically.&quot;
+						</p>
+					</div>
 				</div>
 			</main>
 		</>

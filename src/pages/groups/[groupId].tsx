@@ -10,6 +10,7 @@ import { UserSelect } from "../../components/UserSelect";
 import { DeleteButton } from "../../components/DeleteButton";
 import { LeaveButton } from "../../components/LeaveButton";
 import CoolButton from "../../components/CoolButton";
+import Modal from "../../components/Modal";
 
 const GroupPage: NextPage = () => {
 	const { data: session } = useSession();
@@ -29,6 +30,10 @@ const GroupPage: NextPage = () => {
 	const groupMembers = groupMembersQuery.data;
 	const [disabledUsers, setDisabledUsers] = useState<string[]>([]);
 	const [copyText, setCopyText] = useState("Click to copy!");
+	const [helpModalOpen, setHelpModalOpen] = useState(false);
+	const [randomGame, setRandomGame] = useState<string>("");
+	const [randomModalOpen, setRandomModalOpen] = useState(false);
+
 	// set disabledUsers to groupMembersSteamIds on first page load
 	useEffect(() => {
 		const groupMembersSteamIds: string[] = groupMembers?.map((member) => member?.steamId) as string[];
@@ -78,8 +83,7 @@ const GroupPage: NextPage = () => {
 						<div className="flex justify-start items-start">
 							<CoolButton
 								onClick={() => {
-									// TODO write need help thing
-									alert("I'm working on writing this!");
+									setHelpModalOpen(true);
 								}}
 							>
 								Need Help?
@@ -112,6 +116,7 @@ const GroupPage: NextPage = () => {
 									// TODO group settings
 									alert("Editing group settings will come soon!");
 								}}
+								className="mr-5"
 							>
 								Group Settings
 							</CoolButton>
@@ -144,7 +149,8 @@ const GroupPage: NextPage = () => {
 						setDisabledUsers={setDisabledUsers}
 					></UserSelect>
 
-					<h1 className="text-5xl border-violet-500 border-b-4 pb-3 px-5 my-20">Games You Can Play</h1>
+					<h1 className="text-5xl border-violet-500 border-b-4 px-5">Games You Can Play</h1>
+
 					{usersInstalledGamesQuery.data?.length === 0 ? (
 						<div className="text-2xl">
 							{enabledUsers.length === 0
@@ -152,20 +158,87 @@ const GroupPage: NextPage = () => {
 								: "Sorry, you guys don't have any games in common apparently!"}
 						</div>
 					) : (
-						<div id="games" className="grid items-center grid-cols-5 gap-10 w-full">
-							{usersInstalledGamesQuery.data?.map((appId: string) => {
-								return (
-									<GameCover
-										appId={appId}
-										installed={true}
-										key={appId}
-										alt={appId + " Game Cover"}
-									></GameCover>
-								);
-							})}
-						</div>
+						<>
+							{enabledUsers.length != 0 ? (
+								<CoolButton
+									onClick={() => {
+										const gamesArray = usersInstalledGamesQuery.data;
+										const randomGame = gamesArray[Math.floor(Math.random() * gamesArray.length)];
+										setRandomGame(randomGame);
+										setRandomModalOpen(true);
+									}}
+									className="pb-3 mt-5 mb-5"
+								>
+									Decide For Me!
+								</CoolButton>
+							) : null}
+							<div id="games" className="grid items-center grid-cols-6 gap-10 w-full">
+								{usersInstalledGamesQuery.data?.map((appId: string) => {
+									return (
+										<GameCover
+											appId={appId}
+											installed={true}
+											key={appId}
+											alt={appId + " Game Cover"}
+										></GameCover>
+									);
+								})}
+							</div>
+						</>
 					)}
 				</main>
+				{helpModalOpen ? (
+					<Modal setOpenFunction={setHelpModalOpen} title="Help">
+						<div className="flex flex-col">
+							<p>
+								First, invite your friends to the group. Copy the join code and send it to your friends.
+								Have them log into the website, go to Groups, and join a group with your join code. Once
+								you have friends in the group, click on a few user&apos;s icons to move them over to the
+								&quot;Online&quot; side. It will then show what games all those users have in common!
+							</p>
+							<div className="mt-5 flex flex-col justify-end items-end">
+								<CoolButton
+									onClick={() => {
+										setHelpModalOpen(false);
+									}}
+								>
+									Close
+								</CoolButton>
+							</div>
+						</div>
+					</Modal>
+				) : null}
+				{randomModalOpen ? (
+					<Modal setOpenFunction={setRandomModalOpen} title="Random Game">
+						<div className="flex flex-col">
+							<h1>Here you go!</h1>
+							<div
+								className="grid items-center grid-cols-1 items-center p-4 text-center gap-10 w-full flex"
+								style={{
+									display: "flex",
+									justifyContent: "center",
+								}}
+							>
+								<GameCover
+									className="justify-center items-center text-center"
+									appId={randomGame}
+									installed={true}
+									key={randomGame}
+									alt={randomGame + " Game Cover"}
+								></GameCover>
+							</div>
+							<div className="mt-5 flex flex-col justify-end items-end">
+								<CoolButton
+									onClick={() => {
+										setRandomModalOpen(false);
+									}}
+								>
+									Close
+								</CoolButton>
+							</div>
+						</div>
+					</Modal>
+				) : null}
 			</>
 		);
 	}

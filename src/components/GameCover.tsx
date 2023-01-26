@@ -87,7 +87,7 @@ const GameCover = ({ appId, alt, installed, className, ...rest }: GameCoverProps
 			<div className="relative">
 				<Image
 					src={imgSrc}
-					width={width}
+					width={300}
 					height={height}
 					alt={alt}
 					style={{

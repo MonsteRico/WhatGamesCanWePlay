@@ -1,13 +1,3 @@
-MVP NEEDS THIS STUFF
-- about page EDIT
-- help modal on group pages
-
-- logo (potentially animated?)
-- "decide for me" button on group page to pick a random game from the currently shown list
-    - should have animation of spinning wheel when deciding b/c fun
-
-
-
 THIS IS FOR LATER
 - settings modal on group pages
 - group settings

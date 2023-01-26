@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { signIn, signOut, useSession } from "next-auth/react";
-import logo from "../../public/platRat.png";
+import logo from "../logoStuff/logo_final.png";
 import Image from "next/future/image";
 import CoolButton from "./CoolButton";
 import SetSteamIdContent from "./SetSteamIdContent";
@@ -24,8 +24,8 @@ export default function NavBar() {
 									alt="Logo"
 									className="h-20 w-auto hover:cursor-pointer"
 									src={logo}
-									width={200}
-									height={200}
+									width={300}
+									height={300}
 									unoptimized
 								></Image>
 							</Link>

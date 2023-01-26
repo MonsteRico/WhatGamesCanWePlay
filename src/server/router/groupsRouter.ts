@@ -310,6 +310,7 @@ export const groupsRouter = createProtectedRouter()
 		async resolve({ input, ctx }) {
 			const { groupId } = input;
 			const { prisma } = ctx;
+
 			const groupMembersInMembersTable = await prisma.groupMember.findMany({
 				where: {
 					group: {
@@ -324,6 +325,7 @@ export const groupsRouter = createProtectedRouter()
 					},
 				});
 				if (user && groupMemberEntry.userId == user.id) {
+					console.log(user);
 					return { userId: user.id, userName: user.name, steamId: user.steamId, image: user.image };
 				}
 			});

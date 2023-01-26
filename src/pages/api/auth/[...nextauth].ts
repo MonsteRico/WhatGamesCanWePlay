@@ -62,6 +62,21 @@ export const authOptions: NextAuthOptions = {
 					});
 				}
 			}
+			const discordUser = await prisma.user.findFirst({
+				where: {
+					id: user.id,
+				},
+			});
+			if (discordUser?.image !== profile?.image_url) {
+				await prisma.user.update({
+					where: {
+						id: user.id,
+					},
+					data: {
+						image: profile?.image_url as string,
+					},
+				});
+			}
 			return true;
 		},
 	},
