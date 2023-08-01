@@ -1,6 +1,6 @@
 # Create T3 App
 
-This is an app bootstrapped according to the [init.tips](https://init.tips) stack, also known as the T3-Stack.
+This is an app bootstrapped according to the [init.tips](https://init.tips) stack, also known as the T3-Stack. This branch is being used for a test and can be safely deleted upon that test's completion.
 
 ## Why are there `.js` files in here?
 
